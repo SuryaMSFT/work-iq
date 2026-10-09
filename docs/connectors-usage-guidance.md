@@ -87,7 +87,13 @@ who should write the final response.
    - You're filling a specific gap with a source you've already identified.
 3. **Include every source the user names, including Microsoft 365 sources.**
    For "Slack and Outlook", scope to both the Slack connector and `Email`.
-   Don't drop Outlook just because the request mentions a connector.
+   Don't drop Outlook just because the request mentions a connector. Ask and
+   Retrieve scope sources differently:
+   - Retrieve `capabilities` restricts both Microsoft 365 sources and
+     connectors.
+   - Ask `dataSources.connectorIds` restricts **connectors only**. Microsoft
+     365 work content and web grounding stay on. To focus Ask on Outlook as
+     well, say so in the `question`.
 4. **Scoping is strict.** A scoped request excludes every source you didn't
    list. If a required source can't be scoped (for example, it isn't
    connected), tell the user. Don't silently widen or narrow the scope.
@@ -102,13 +108,18 @@ their identifiers.
 
 | Need | How | Status |
 | --- | --- | --- |
-| List the connectors the user has connected, with their identifiers and setup state | One discovery path shared by Ask, Retrieve, and Tools (for example, `fetch` on a predefined path such as `/connectors`) | **Proposed** (design not final) |
+| List the connectors the user has connected, with their identifiers and setup state | `search_paths` (find the connector collection path), then `get_schema` if needed, then `fetch` (list connectors) | **Proposed.** This depends on Connector IQ onboarding as a provider. Until then, agents can't get connector IDs through Work IQ MCP. |
 | Find the tools for a named connector | `search_paths` with the connector name and task, for example "HubSpot deals next step" | **Proposed** (P0) |
 | Find the skills that a connector provides | `search_paths` returns connector skills | **Proposed** (P1) |
 
 Example prompt: *"Which of my enterprise systems are connected to Copilot?"*
-The agent calls the discovery path and lists each connector with its name,
-identifier, and whether it's connected or needs setup.
+The agent calls `search_paths`, for example with "my connectors", and then
+`fetch` on the path it returns. It then lists each connector with its name, ID,
+and whether it's connected or needs setup.
+
+If you pass an ID that's unknown, disconnected, or not authorized, Ask leaves
+it out of the request. Discovery helps you choose valid IDs; it doesn't give
+the user any extra access.
 
 ### 2.3 Retrieve: getting evidence from connector sources
 
@@ -183,11 +194,31 @@ response with `stoppedReason: "error"` means the call failed.
 - Use **Ask** when the user explicitly asks for Copilot or another agent, or
   when the host only displays the answer. The answer belongs to that agent.
   Attribute it to the agent, and don't claim your agent verified it.
-- **Scope:** Ask can't restrict sources yet. Until it can, describe the
-  intended sources in the `question` text. This guides Copilot but doesn't
-  guarantee that other sources are excluded. **Proposed:** a `capabilities`
-  parameter with the same shape as Retrieve's, which will restrict Ask to the
-  listed sources in the same way as choosing data sources in BizChat.
+- **Scope with `dataSources.connectorIds`.** This is available in MCP behind
+  the `enable_data_sources` flight. When the flight is off, the parameter is
+  hidden from the schema and requests that use it are rejected. It is limited
+  to a single Ask turn and has three states:
+
+  | Input | Effect |
+  | --- | --- |
+  | `dataSources` or `connectorIds` omitted | Default: all connected and enabled connectors |
+  | `"connectorIds": []` | No connectors for this turn |
+  | `"connectorIds": ["id1", "id2"]` | Only these connectors, and only after they're checked against the user's connected and eligible connectors. If the lookup fails, Ask uses no connectors at all. It never falls back to all of them. |
+
+  IDs must be nonblank and unique (compared case-insensitively). This works
+  for sync, federated, user-sync, and hybrid connectors.
+- **Microsoft 365 and web aren't scoped by `connectorIds`.** Work content
+  (mail, Teams, files) and web grounding are always on. To focus on specific
+  Microsoft 365 sources, describe them in the `question`. Copilot uses this as
+  guidance only and can still use other sources.
+- **Point Ask at specific items with `resources`.** This parameter is behind
+  the `enable_ask_content_references` flight. Each entry has exactly one facet:
+  `person`, `file`, `site`, `event`, `message`, `emailConversation`, `chat`,
+  `channel`, or `external`. For a connector item, use `external` with either
+  `{ "url" }` or `{ "itemId", "contentSource" }`. You can combine `resources`
+  with `dataSources`; neither overrides the other.
+- **Without the flight,** describe the intended sources in the `question`.
+  This is guidance only and doesn't guarantee other sources are excluded.
 - Writes through Ask need user confirmation, which Work IQ requests through
   elicitation. Don't treat Ask's answer as proof that a change was made.
 
@@ -198,28 +229,40 @@ week and what needs my attention."*
 { "question": "What changed on the Contoso account this week and what needs my attention? Include risks, open commitments, and next actions with citations." }
 ```
 
-**Example 2: scoped by the user. Available today: describe the sources in
-the question.** *"Did we commit to moving the Contoso launch to Nov 15? Check
-the internal Slack discussion and the latest Outlook thread with the
-customer."*
-
-```json
-{ "question": "Using only our internal Slack discussion and the latest Outlook email thread with Contoso: did we commit to moving the Contoso launch to November 15? Reconcile the internal and external statements and cite both." }
-```
-
-**Example 2, Proposed: strict scoping with `capabilities`.**
+**Example 2: scoped to one connector plus Microsoft 365 mail.** *"Did we
+commit to moving the Contoso launch to Nov 15? Check the internal Slack
+discussion and the latest Outlook thread with the customer."*
 
 ```json
 {
-  "question": "Did we commit to moving the Contoso launch to November 15? Reconcile internal and external statements.",
-  "capabilities": [
-    { "name": "GraphConnectors", "connections": [ { "connection_id": "<slack-connection-id>" } ] },
-    { "name": "Email" }
-  ]
+  "question": "Using our internal Slack discussion and the latest Outlook email thread with Contoso: did we commit to moving the Contoso launch to November 15? Reconcile the internal and external statements and cite both.",
+  "dataSources": { "connectorIds": ["<slack-connector-id>"] }
 }
 ```
 
-**Example 3: a named agent.** *"Ask the Sales Insights agent which Q4 deals are
+`connectorIds` makes Slack the only connector. The question text points
+Copilot at Outlook, because `connectorIds` doesn't restrict Microsoft 365
+content.
+
+**Example 3: Microsoft 365 only, no connectors.** *"Ask Copilot to summarize
+the Contoso launch plan using only our internal M365 content, not external
+systems."*
+
+```json
+{ "question": "Summarize the Contoso launch plan from our internal documents, mail, and Teams discussions.", "dataSources": { "connectorIds": [] } }
+```
+
+**Example 4: a specific connector item.** *"Ask Copilot whether ServiceNow
+ticket SNW-4421 was resolved in line with our SLA."*
+
+```json
+{
+  "question": "Was this ticket resolved within our SLA? Cite the resolution timeline.",
+  "resources": [ { "external": { "itemId": "SNW-4421", "contentSource": "ServiceNow" } } ]
+}
+```
+
+**Example 5: a named agent.** *"Ask the Sales Insights agent which Q4 deals are
 at risk."* Get the agent's ID from `list_agents`, then call:
 
 ```json
@@ -282,22 +325,33 @@ actions."*
 | Retrieve scoping to sync connectors (`GraphConnectors` with `connection_id`) | Available in the preview schema |
 | Retrieve scoping to federated connectors | **Proposed** (the identifier format is still to be decided) |
 | Retrieve `grounding` with connectors | **Open product decision** |
-| Ask scoping (`capabilities`) | **Proposed** |
-| One discovery path for connected sources and their identifiers | **Proposed** |
+| Ask connector scoping (`dataSources.connectorIds`: sync, federated, user-sync, hybrid) | **Built, flight-gated** (`enable_data_sources`, MCP only; not in REST or A2A). PRs [#5662184](https://o365exchange.visualstudio.com/O365%20Core/_git/work-iq/pullrequest/5662184) and [#5675235](https://o365exchange.visualstudio.com/O365%20Core/_git/work-iq/pullrequest/5675235) |
+| Ask scoping of Microsoft 365 sources (Email, Teams, and so on) | **Not planned.** The design treats it as a non-goal; `connectorIds` doesn't control work or web grounding. |
+| Ask `resources` (specific items, including `external` connector items) | **Built, flight-gated** (`enable_ask_content_references`) |
+| Connector ID discovery (`search_paths`, then `get_schema`, then `fetch`) | **Proposed.** This waits for Connector IQ to onboard as a provider. There's no public `list_connectors` tool. |
 | Connector tools through `search_paths`, `call_function`, and `do_action` | **Proposed** (P0) |
 | URL elicitation for authentication, form elicitation for write confirmation | **Proposed** (P0) |
 | Connector skills, MCP Apps, MCP Tasks | **Proposed** (P1) |
 
 ## 4. Open questions before the skill update
 
-1. What will the discovery path for connected sources be, and will it return
-   the same identifiers for Ask, Retrieve, and Tools?
-2. How will federated connectors be identified in `capabilities`?
-3. Will Ask's `capabilities` parameter use the same shape as Retrieve's, and
-   will it also be unavailable with a non-default `agentId`?
+1. **Identifier alignment:** Ask uses public connector IDs (`connectorIds`),
+   while Retrieve uses `GraphConnectors.connections[].connection_id`. Will the
+   Connector IQ discovery path return one identifier that works for both, or
+   will agents need a mapping between them?
+2. **Shape alignment:** Ask uses `dataSources.connectorIds` (connectors only),
+   while Retrieve uses `capabilities` (Microsoft 365 sources plus connectors).
+   Should the two converge so agents learn one scoping model, and should Ask
+   be able to scope Microsoft 365 sources the way BizChat source selection
+   does?
+3. How will federated connectors be identified in Retrieve `capabilities`?
 4. The `workiq-preview` skill currently defaults to `grounding`. Once
    `grounding` supports connectors, should requests without a named source
    still use `grounding`, or switch to `copilot` when the user has connectors
    connected?
 5. When a connector the user named isn't connected, what should happen:
-   start the connect flow (Proposed P1), or report the problem and stop?
+   start the connect flow (Proposed P1), or report the problem and stop? Ask
+   currently drops IDs that aren't eligible without saying so. Should it tell
+   the agent which IDs it dropped?
+6. When will `enable_data_sources` and `enable_ask_content_references` roll
+   out to tenants that use third-party harnesses?
