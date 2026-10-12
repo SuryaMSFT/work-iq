@@ -40,9 +40,9 @@ Retrieve can be scoped to specific Connectors and Microsoft 365 sources (see
 **Use entity tools when the work is specific to one connected system.**
 With entity tools, the agent can search for the operations that every
 connected system exposes and call them directly to create, read, update, and
-delete records. It finds the right operation with `search_paths`, checks its
-inputs with `get_schema`, and then calls it (see
-[Entity tools](#entity-tools) for details). Entity tools provide depth and
+delete records. It finds the right tools and their supported operations with
+`search_paths`, checks the input schema for the operation with `get_schema`,
+and then calls the operation (see [Entity tools](#entity-tools) for details). Entity tools provide depth and
 completeness that Retrieve doesn't. Use entity tools to:
 - Get full records, with all their fields, history, and related items.
 - Get every record that matches field filters, or a count of them.
@@ -213,8 +213,9 @@ change; use entity tools after the user confirms.
 
 Connector operations appear in `search_paths` results next to Microsoft 365
 paths. To use one:
-1. Search for the operation, such as "HubSpot deals by close date".
-2. Check the operation's inputs with `get_schema`.
+1. Find the right tools and their supported operations with `search_paths`,
+   such as "HubSpot deals by close date".
+2. Check the input schema for the operation with `get_schema`.
 3. Read with `call_function`.
 4. Write with `do_action`, but only after the user confirms the exact change.
 5. If a sign-in is required, show it to the user. When they've signed in,
