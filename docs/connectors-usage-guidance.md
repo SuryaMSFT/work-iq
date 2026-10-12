@@ -3,8 +3,9 @@
 Connectors let agents work with data in third-party and line-of-business
 systems, such as Jira, ServiceNow, HubSpot, Slack, Intercom, and many others,
 alongside Microsoft 365. Agents use them through three Work IQ capabilities:
-Ask, Retrieve, and Tools. The examples in this guide use a few well-known
-systems, but the same guidance applies to any connected system.
+Ask, Retrieve, and entity tools (`search_paths`, `get_schema`,
+`call_function`, `do_action`, and others). The examples in this guide use a
+few well-known systems, but the same guidance applies to any connected system.
 
 ## When to use what
 
@@ -36,21 +37,22 @@ answer is spread across systems or the agent doesn't know where it lives.
 Retrieve can be scoped to specific Connectors and Microsoft 365 sources (see
 [Scoping](#scoping)).
 
-**Use Tools when the work is specific to one connected system.** Tools use
-that system's own operations, such as search, query, get, create, and update.
-They provide depth and completeness that Retrieve doesn't. Use Tools to:
+**Use entity tools when the work is specific to one connected system.**
+Entity tools use that system's own operations, such as search, query, get,
+create, and update. They provide depth and completeness that Retrieve doesn't.
+Use entity tools to:
 - Get full records, with all their fields, history, and related items.
 - Get every record that matches field filters, or a count of them.
 - Make changes, such as creating, updating, or transitioning a record.
 
-For example, use Tools to get a deal's complete activity history from a CRM
-such as Salesforce or HubSpot, list every open P1 issue in a tracker such as
-Jira, or update a ticket in a service desk such as ServiceNow.
+For example, use entity tools to get a deal's complete activity history from a
+CRM such as Salesforce or HubSpot, list every open P1 issue in a tracker such
+as Jira, or update a ticket in a service desk such as ServiceNow.
 
-**Use Retrieve and then Tools when the agent must find something first and
-then act on it.** For example, Retrieve finds the at-risk deals from CRM notes,
-mail, and support history. Tools then read each full CRM record and update
-its next step.
+**Use Retrieve and then entity tools when the agent must find something first
+and then act on it.** For example, Retrieve finds the at-risk deals from CRM
+notes, mail, and support history. Entity tools then read each full CRM record
+and update its next step.
 
 | Prompt | Use |
 | --- | --- |
@@ -62,10 +64,10 @@ its next step.
 | "Summarize customer feedback on telemetry from Jira, Slack, and email." | Retrieve, scoped to those sources |
 | "What does our ServiceNow KB say about VPN certificate errors?" | Retrieve, scoped to ServiceNow |
 | "Ask Copilot whether ServiceNow ticket SNW-4421 met its SLA." | Ask, pointed at that ticket |
-| "Show the full activity history of the Fabrikam deal in HubSpot." | Tools |
-| "List all open P1 Jira issues in project TEL." | Tools |
-| "Set the next step on the Fabrikam deal to 'Security review on Oct 20'." | Tools, after the user confirms |
-| "Prepare the Q4 pipeline review and update next steps where they're clear." | Retrieve, then Tools |
+| "Show the full activity history of the Fabrikam deal in HubSpot." | Entity tools |
+| "List all open P1 Jira issues in project TEL." | Entity tools |
+| "Set the next step on the Fabrikam deal to 'Security review on Oct 20'." | Entity tools, after the user confirms |
+| "Prepare the Q4 pipeline review and update next steps where they're clear." | Retrieve, then entity tools |
 
 **Common mistakes to avoid:**
 - Calling Ask to gather information the agent will reason over itself.
@@ -75,9 +77,9 @@ its next step.
 - Calling Retrieve or listing agents before an "Ask Copilot..." request. Call
   Ask directly.
 - Treating Ask's answer as proof that something was done. Changes are made
-  with Tools.
+  with entity tools.
 - Using Retrieve to get complete lists or record IDs for updates.
-- Making many Tools calls to imitate a search.
+- Making many entity tool calls to imitate a search.
 - Switching between Ask and Retrieve on your own after an error, an empty
   result, or a sign-in prompt.
 
@@ -202,9 +204,9 @@ Present the answer as that agent's answer and keep its citations. Don't
 claim you checked the sources yourself. If Ask fails, don't switch to Retrieve
 on your own. Explain the alternative and let the user decide. If the user also
 asked for a change, such as updating a record, Ask's answer doesn't make the
-change; use Tools after the user confirms.
+change; use entity tools after the user confirms.
 
-### Tools
+### Entity tools
 
 Connector operations appear in `search_paths` results next to Microsoft 365
 paths. To use one:
@@ -241,7 +243,7 @@ makes them with `do_action`.
    it dropped?
 7. **Named agents.** Does Ask scoping work when the call targets a specific
    agent? Retrieve doesn't allow scoping in that case.
-8. **Availability.** When will Ask scoping and Connector Tools reach tenants
+8. **Availability.** When will Ask scoping and Connector entity tools reach tenants
    that use third-party agent hosts?
 9. **The two skills choose Ask differently.** This guide follows
    `workiq-preview`: use Retrieve by default and Ask only when the user hands
