@@ -1,11 +1,10 @@
 # Using Connectors with Work IQ: when to use what, and how
 
-Connectors let agents work with data in business systems alongside Microsoft
-365. These include CRMs (such as Salesforce or HubSpot), issue trackers (such
-as Jira or Azure DevOps), IT service management tools (such as ServiceNow),
-customer support tools (such as Zendesk or Intercom), and team chat apps (such
-as Slack). Agents use them through three Work IQ capabilities: Ask, Retrieve,
-and Tools.
+Connectors let agents work with data in third-party and line-of-business
+systems, such as Jira, ServiceNow, HubSpot, Slack, Intercom, and many others,
+alongside Microsoft 365. Agents use them through three Work IQ capabilities:
+Ask, Retrieve, and Tools. The examples in this guide use a few well-known
+systems, but the same guidance applies to any connected system.
 
 ## When to use what
 
@@ -15,11 +14,11 @@ Connector. What matters is what the agent needs back.
 **Use Ask to delegate a question to Copilot or another agent.** Use it only
 when the user asks for that agent's answer, either by saying "Ask Copilot..."
 or by naming a specific agent. Copilot then works across the user's Microsoft
-365 content and connected systems itself. For example, it can combine team
-chat threads, CRM deal notes, and Outlook mail into one answer. Ask can be
-scoped to specific Connectors (see [Scoping](#scoping)). If Retrieve isn't
-available, the agent can offer Ask as an option, but it uses Ask only if the
-user agrees.
+365 content and connected systems itself. For example, it can combine Slack
+threads, CRM deal notes, Outlook mail, and other sources into one answer. Ask
+can be scoped to specific Connectors (see [Scoping](#scoping)). If Retrieve
+isn't available, the agent can offer Ask as an option, but it uses Ask only if
+the user agrees.
 
 Ask returns that agent's answer, which the calling agent passes on as the other
 agent's work. An ordinary question, summary, or investigation isn't a reason
@@ -28,14 +27,14 @@ those.
 
 **Use Retrieve when the agent needs semantic understanding across sources.**
 Retrieve finds content by meaning across connected systems and Microsoft 365,
-such as knowledge base articles, issue tracker tickets, support
-conversations, team chat messages, and Outlook mail. It returns compact,
-relevant excerpts with
-citations, sized so the agent can reason over them without spending tokens on
-whole records. Use Retrieve for investigations, summaries, comparisons, and
-catch-up, especially when the answer is spread across systems or the agent
-doesn't know where it lives. Retrieve can be scoped to specific Connectors and
-Microsoft 365 sources (see [Scoping](#scoping)).
+such as ServiceNow KB articles, Jira issues, Intercom conversations, Slack
+messages, Outlook mail, and similar content from other connected systems. It
+returns compact, relevant excerpts with citations, sized so the agent can
+reason over them without spending tokens on whole records. Use Retrieve for
+investigations, summaries, comparisons, and catch-up, especially when the
+answer is spread across systems or the agent doesn't know where it lives.
+Retrieve can be scoped to specific Connectors and Microsoft 365 sources (see
+[Scoping](#scoping)).
 
 **Use Tools when the work is specific to one connected system.** Tools use
 that system's own operations, such as search, query, get, create, and update.
@@ -44,14 +43,14 @@ They provide depth and completeness that Retrieve doesn't. Use Tools to:
 - Get every record that matches field filters, or a count of them.
 - Make changes, such as creating, updating, or transitioning a record.
 
-For example, use Tools to get a CRM deal's complete activity history, list
-every open P1 issue in an issue tracker project, or update an IT service
-ticket.
+For example, use Tools to get a deal's complete activity history from a CRM
+such as Salesforce or HubSpot, list every open P1 issue in a tracker such as
+Jira, or update a ticket in a service desk such as ServiceNow.
 
 **Use Retrieve and then Tools when the agent must find something first and
 then act on it.** For example, Retrieve finds the at-risk deals from CRM notes,
-mail, and support history. Tools then read each full CRM record and update its
-next step.
+mail, and support history. Tools then read each full CRM record and update
+its next step.
 
 | Prompt | Use |
 | --- | --- |
@@ -60,11 +59,11 @@ next step.
 | "Ask that same agent which of those deals is most urgent." | Ask, continuing the same conversation |
 | "What changed on the Contoso account this week?" | Retrieve, because the user didn't ask for Copilot |
 | "Investigate the Contoso escalation and prepare a response plan." | Retrieve |
-| "Summarize customer feedback on telemetry from our issue tracker, team chat, and email." | Retrieve, scoped to those sources |
-| "What does our IT knowledge base say about VPN certificate errors?" | Retrieve, scoped to that Connector |
-| "Ask Copilot whether IT ticket INC-4421 met its SLA." | Ask, pointed at that ticket |
-| "Show the full activity history of the Fabrikam deal in our CRM." | Tools |
-| "List all open P1 issues in project TEL." | Tools |
+| "Summarize customer feedback on telemetry from Jira, Slack, and email." | Retrieve, scoped to those sources |
+| "What does our ServiceNow KB say about VPN certificate errors?" | Retrieve, scoped to ServiceNow |
+| "Ask Copilot whether ServiceNow ticket SNW-4421 met its SLA." | Ask, pointed at that ticket |
+| "Show the full activity history of the Fabrikam deal in HubSpot." | Tools |
+| "List all open P1 Jira issues in project TEL." | Tools |
 | "Set the next step on the Fabrikam deal to 'Security review on Oct 20'." | Tools, after the user confirms |
 | "Prepare the Q4 pipeline review and update next steps where they're clear." | Retrieve, then Tools |
 
@@ -91,10 +90,9 @@ sources they can reach. A topic such as "Contoso deals" isn't a reason to
 scope.
 
 Scope only in these cases:
-- The user names a source, such as "check team chat and the Outlook thread".
+- The user names a source, such as "check Slack and the Outlook thread".
 - The task has a clear boundary, such as "support tickets only".
-- The agent is filling one specific gap, such as the status of one issue in
-  the issue tracker.
+- The agent is filling one specific gap, such as the status of one Jira issue.
 
 When you scope, include every source the user named, including Microsoft 365
 sources such as Outlook or Teams.
@@ -117,7 +115,7 @@ To scope, list the sources in `capabilities`. Connectors go under
 `GraphConnectors`, and Microsoft 365 sources use their own names, such as
 `Email`.
 
-*"Investigate the Contoso escalation using our support tool's history and
+*"Investigate the Contoso escalation using Intercom support history and
 customer emails."*
 
 ```json
@@ -125,7 +123,7 @@ customer emails."*
   "query": ["Contoso escalation timeline: support issues and customer communications"],
   "strategy": "copilot",
   "capabilities": [
-    { "name": "GraphConnectors", "connections": [ { "connection_id": "<support-tool-id>" } ] },
+    { "name": "GraphConnectors", "connections": [ { "connection_id": "<intercom-id>" } ] },
     { "name": "Email" }
   ]
 }
@@ -133,7 +131,7 @@ customer emails."*
 
 Inside a Connector, you can narrow to a container, path, or item.
 
-*"What does the IT-Network knowledge base say about VPN certificate errors?"*
+*"What does the IT-Network ServiceNow KB say about VPN certificate errors?"*
 
 ```json
 {
@@ -141,7 +139,7 @@ Inside a Connector, you can narrow to a container, path, or item.
   "strategy": "copilot",
   "capabilities": [
     { "name": "GraphConnectors", "connections": [
-      { "connection_id": "<it-knowledge-base-id>", "items_by_container_name": [ { "container_name": "IT-Network" } ] }
+      { "connection_id": "<servicenow-id>", "items_by_container_name": [ { "container_name": "IT-Network" } ] }
     ] }
   ]
 }
@@ -164,13 +162,13 @@ source, name it in the question. Never send Retrieve parameters such as
 `query`, `strategy`, or `capabilities` to Ask.
 
 *"Ask Copilot whether we committed to moving the Contoso launch to Nov 15.
-Have it check the internal team chat discussion and the latest Outlook thread
-with the customer."*
+Have it check the internal Slack discussion and the latest Outlook thread with
+the customer."*
 
 ```json
 {
-  "question": "Using our internal team chat discussion and the latest Outlook thread with Contoso, did we commit to moving the launch to November 15? Cite both.",
-  "dataSources": { "connectorIds": ["<team-chat-id>"] }
+  "question": "Using our internal Slack discussion and the latest Outlook thread with Contoso, did we commit to moving the launch to November 15? Cite both.",
+  "dataSources": { "connectorIds": ["<slack-id>"] }
 }
 ```
 
@@ -178,12 +176,12 @@ To point Ask at specific items, use `resources` for Connector records or
 `fileUrls` for OneDrive and SharePoint files. Don't widen a request about one
 item into a broad search.
 
-*"Ask Copilot whether IT ticket INC-4421 was resolved within SLA."*
+*"Ask Copilot whether ServiceNow ticket SNW-4421 was resolved within SLA."*
 
 ```json
 {
   "question": "Was this ticket resolved within our SLA?",
-  "resources": [ { "external": { "itemId": "INC-4421", "contentSource": "<it-service-tool>" } } ]
+  "resources": [ { "external": { "itemId": "SNW-4421", "contentSource": "ServiceNow" } } ]
 }
 ```
 
@@ -210,15 +208,15 @@ change; use Tools after the user confirms.
 
 Connector operations appear in `search_paths` results next to Microsoft 365
 paths. To use one:
-1. Search for the operation, such as "CRM deals by close date".
+1. Search for the operation, such as "HubSpot deals by close date".
 2. Check the request body with `get_schema` if you need to.
 3. Read with `call_function`.
 4. Write with `do_action`, but only after the user confirms the exact change.
 5. If a sign-in is required, show it to the user. When they've signed in,
    make the same call again.
 
-*"Review Q4 strategic deals in our CRM, find ones with no next step, and
-update the next step where it's clear."* The agent finds the CRM search and
+*"Review Q4 strategic deals in HubSpot, find ones with no next step, and
+update the next step where it's clear."* The agent finds the HubSpot search and
 update operations with `search_paths`. It reads the deals with
 `call_function` and proposes updates. After the user confirms the updates, it
 makes them with `do_action`.
@@ -249,5 +247,5 @@ makes them with `do_action`.
    `workiq-preview`: use Retrieve by default and Ask only when the user hands
    the question off. The public `workiq` skill does the opposite and prefers
    Ask for summaries and reasoning. Should both skills follow the same rule?
-   And should hosts that only display an answer, such as a Copilot bot in a
-   team chat app, be treated as handing off by default?
+   And should hosts that only display an answer, such as a Copilot bot in
+   Slack, be treated as handing off by default?
