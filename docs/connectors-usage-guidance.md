@@ -26,7 +26,7 @@ agent's work. An ordinary question, summary, or investigation isn't a reason
 to use Ask, even when it spans several connected systems. Use Retrieve for
 those.
 
-**Use Retrieve when the agent needs semantic understanding across sources.**
+**Use Retrieve when the task needs semantic understanding across sources.**
 Retrieve finds content by meaning across connected systems and Microsoft 365,
 such as ServiceNow KB articles, Jira issues, Intercom conversations, Slack
 messages, Outlook mail, and similar content from other connected systems. It
@@ -34,16 +34,18 @@ returns compact, relevant excerpts with citations, sized so the agent can
 reason over them without spending tokens on whole records. Use Retrieve for
 investigations, summaries, comparisons, and catch-up, especially when the
 answer is spread across systems or the agent doesn't know where it lives.
-Retrieve can be scoped to specific Connectors and Microsoft 365 sources (see
+Retrieve can be scoped to one or more Connectors and Microsoft 365 sources (see
 [Scoping](#scoping)).
 
-**Use entity tools when the work is specific to one connected system.**
+**Use entity tools when the task needs depth, completeness, or write actions
+in one connected system.**
 With entity tools, the agent can search for the operations that every
 connected system exposes and call them directly to create, read, update, and
 delete records. It finds the right tools and their supported operations with
 `search_paths`, checks the input schema for the operation with `get_schema`,
-and then calls the operation (see [Entity tools](#entity-tools) for details). Entity tools provide depth and
-completeness that Retrieve doesn't. Use entity tools to:
+and then calls the operation (see [Entity tools](#entity-tools) for details).
+Entity tools provide depth and completeness that Retrieve doesn't. Use entity
+tools to:
 - Get full records, with all their fields, history, and related items.
 - Get every record that matches field filters, or a count of them.
 - Make changes, such as creating, updating, or transitioning a record.
@@ -52,20 +54,18 @@ For example, use entity tools to get a deal's complete activity history from a
 CRM such as Salesforce or HubSpot, list every open P1 issue in a tracker such
 as Jira, or update a ticket in a service desk such as ServiceNow.
 
-**Use Retrieve and then entity tools when the agent must find something first
-and then act on it.** For example, Retrieve finds the at-risk deals from CRM
-notes, mail, and support history. Entity tools then read each full CRM record
-and update its next step.
+**Use Retrieve and then entity tools when the task needs both.** For example,
+Retrieve finds the at-risk deals from CRM notes, mail, and support history.
+Entity tools then read each full CRM record and update its next step.
 
 ```mermaid
 flowchart TD
     Q1{"Did the user ask Copilot<br/>or a named agent?"}
     Q1 -->|Yes| ASK["Ask"]
-    Q1 -->|No| Q2{"Is the work specific to<br/>one connected system?"}
-    Q2 -->|No| RET["Retrieve"]
-    Q2 -->|Yes| Q3{"Does the agent need to<br/>find the items first?"}
-    Q3 -->|Yes| BOTH["Retrieve, then entity tools"]
-    Q3 -->|No| ET["Entity tools"]
+    Q1 -->|No| Q2{"What does the task need?"}
+    Q2 -->|"Semantic understanding<br/>across sources"| RET["Retrieve<br/>scoped to one or more<br/>Connectors if needed"]
+    Q2 -->|"Depth, completeness, or<br/>write actions in one source"| ET["Entity tools"]
+    Q2 -->|Both| BOTH["Retrieve, then entity tools"]
 ```
 
 | Prompt | Use |
