@@ -13,9 +13,10 @@ Connector. What matters is what the agent needs back.
 when the user asks for that agent's answer, either by saying "Ask Copilot..."
 or by naming a specific agent. Copilot then works across the user's Microsoft
 365 content and connected systems itself. For example, it can combine Slack
-threads, HubSpot deal notes, and Outlook mail into one answer. The user can
-limit which Connectors Copilot uses. If Retrieve isn't available, the agent
-can offer Ask as an option, but it uses Ask only if the user agrees.
+threads, HubSpot deal notes, and Outlook mail into one answer. Ask can be
+scoped to specific Connectors (see [Scoping](#scoping)). If Retrieve isn't
+available, the agent can offer Ask as an option, but it uses Ask only if the
+user agrees.
 
 Ask returns that agent's answer, which the calling agent passes on as the other
 agent's work. An ordinary question, summary, or investigation isn't a reason
@@ -28,7 +29,8 @@ ServiceNow KB articles, Jira issues, Intercom conversations, or Slack messages.
 It can include Microsoft 365 content in the same results. The agent then
 works out the answer itself. Use Retrieve for investigations, summaries,
 comparisons, and catch-up across systems. It's the right choice when the agent
-doesn't know which record holds the answer.
+doesn't know which record holds the answer. Retrieve can be scoped to specific
+Connectors and Microsoft 365 sources (see [Scoping](#scoping)).
 
 **Use Tools when the agent needs exact records from a connected system or
 needs to make a change there.** Tools read and write records directly in that
