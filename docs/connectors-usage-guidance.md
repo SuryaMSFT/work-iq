@@ -10,7 +10,7 @@ few well-known systems, but the same guidance applies to any connected system.
 ## When to use what
 
 Work IQ gives agents access to more than 400 Connectors to enterprise systems.
-Examples include:
+Some of the popular Connectors include:
 - **Files and knowledge:** Google Drive, intranet sites, ServiceNow KB, Notion
 - **Communication, meetings, and people:** Slack, Zoom, Workday
 - **Developer tools:** Jira Cloud, GitHub, Confluence Cloud, Azure DevOps
@@ -30,58 +30,57 @@ available through entity tools.
 The same rules apply whether the data lives in Microsoft 365 or in a
 Connector. What matters is what the task needs.
 
-**Use Ask to delegate a question to Copilot or another agent.** Use it only
-when the user asks for that agent's answer, either by saying "Ask Copilot..."
-or by naming a specific agent. Copilot then works across the user's Microsoft
-365 content and connected systems itself. For example, it can combine Slack
-threads, CRM deal notes, Outlook mail, and other sources into one answer. Ask
-can be scoped to specific Connectors (see [Scoping](#scoping)). If Retrieve
-isn't available, the agent can offer Ask as an option, but it uses Ask only if
-the user agrees.
+### 1. Use Ask to delegate a question to Copilot or another agent
 
-Ask returns that agent's answer, which the calling agent passes on as the other
-agent's work. An ordinary question, summary, or investigation isn't a reason
-to use Ask, even when it spans several connected systems. Use Retrieve for
-those.
+Use Ask when the user explicitly requests an answer from Copilot or a named
+agent. Copilot handles reasoning across Microsoft 365 and connected systems.
+For example, it can combine Slack threads, CRM deal notes, Outlook mail, and
+other sources into one answer. Ask returns an answer, which the calling agent
+passes on as the other agent's work. Ask can be scoped to one or more
+Connectors and Microsoft 365 sources.
 
-**Use Retrieve when the task needs to gather evidence and build semantic
-understanding across sources.**
-Retrieve finds content by meaning across connected systems and Microsoft 365,
-such as ServiceNow KB articles, Jira issues, Intercom conversations, Slack
-messages, Outlook mail, and similar content from other connected systems. It
-returns compact, relevant excerpts with citations, sized so the agent can
-reason over them without spending tokens on whole records. Use Retrieve for
-investigations, summaries, comparisons, and catch-up, especially when the
-answer is spread across systems or the agent doesn't know where it lives.
-Retrieve can be scoped to one or more Connectors and Microsoft 365 sources (see
-[Scoping](#scoping)).
+### 2. Use Retrieve to gather relevant evidence and context across sources
 
-**Use entity tools when the task needs depth, completeness, or write actions
-in one connected system.**
-With entity tools, the agent can search for the operations that every
-connected system exposes and call them directly to create, read, update, and
-delete records. It finds the right tools and their supported operations with
-`search_paths`, checks the input schema for the operation with `get_schema`,
-and then calls the operation (see [Entity tools](#entity-tools) for details).
-Entity tools provide depth and completeness that Retrieve doesn't. Use entity
-tools to:
+Use Retrieve for semantic understanding across Microsoft 365 and connected
+systems. It returns relevant, token-efficient excerpts with citations,
+allowing agents to reason over information without retrieving entire records.
+Ideal for investigations, summaries, comparisons, and catch-up scenarios,
+especially when information spans multiple systems or its location is
+unknown. For example, agents can combine ServiceNow KB articles, Jira issues,
+Intercom conversations, Slack messages, and Outlook emails to investigate a
+customer escalation. Retrieve supports scoping to specific Connectors and
+Microsoft 365 sources.
+
+### 3. Use entity tools for precise, complete data access and actions for a specific connected system
+
+Use entity tools when the task requires full records, structured queries, or
+actions in a specific connected system. You can find the right Connector
+tools and their supported operations with `search_paths`, check the input
+schema for the operation with `get_schema`, and then execute the operation.
+
+Entity tools provide depth and completeness. Use entity tools to:
 - Get full records, with all their fields, history, and related items.
 - Get every record that matches field filters, or a count of them.
 - Make changes, such as creating, updating, or transitioning a record.
 
-For example, use entity tools to get a deal's complete activity history from a
-CRM such as Salesforce or HubSpot, list every open P1 issue in a tracker such
-as Jira, or update a ticket in a service desk such as ServiceNow.
+For example, use entity tools to get a deal's complete activity history from
+a CRM such as Salesforce or HubSpot, list every open P1 issue in a tracker
+such as Jira, or update a ticket in a service desk such as ServiceNow.
 
-**Use Retrieve and then entity tools when the task gathers evidence across
-sources and then goes deep or acts in one system.** This is common for
-reviews, triage, and follow-ups, such as:
-- A pipeline review that weighs CRM notes, mail, and support history, then
-  reads each at-risk deal in full and updates its next step.
-- An escalation investigation that pulls together Slack threads, support
-  conversations, and KB articles, then files a Jira issue with the findings.
-- Ticket triage that finds related incidents and known fixes, then updates
-  the ServiceNow ticket with the resolution.
+### 4. Combine Retrieve and entity tools for cross-source understanding and deeper investigation or action
+
+Use Retrieve to gather relevant evidence across systems, then entity tools to
+inspect complete records or take actions. Agents can iterate between the two
+as new questions emerge.
+
+Common scenarios include:
+- **Pipeline review:** Use Retrieve to analyze CRM notes, emails, and support
+  history; entity tools to inspect at-risk deals and update next steps.
+- **Escalation investigation:** Use Retrieve to correlate Slack discussions,
+  support conversations, and KB articles; entity tools to create a Jira issue
+  with the findings.
+- **Ticket triage:** Use Retrieve to identify related incidents and known
+  fixes; entity tools to update the ServiceNow ticket with the resolution.
 
 ```mermaid
 flowchart TD
