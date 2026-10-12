@@ -59,18 +59,13 @@ and update its next step.
 
 ```mermaid
 flowchart TD
-    A[User request] --> B{Did the user ask for Copilot's<br/>or a named agent's answer?}
-    B -- Yes --> ASK[Ask<br/>scoped to Connectors if needed]
-    B -- No --> C{Does the work need full records,<br/>every matching record, a count,<br/>or a change in one connected system?}
-    C -- No --> RET[Retrieve<br/>scoped to sources if needed]
-    C -- Yes --> D{Does the agent first need to find<br/>the relevant items by meaning<br/>or across sources?}
-    D -- Yes --> RT[Retrieve, then entity tools]
-    D -- No --> ET[Entity tools<br/>search_paths, get_schema, then call]
-    RET --> E{Is Retrieve available?}
-    E -- No --> F[Explain why and offer Ask.<br/>Use Ask only if the user agrees.]
-    ET --> G{Does it change data?}
-    RT --> G
-    G -- Yes --> H[Confirm the exact change<br/>with the user first]
+    Q1{"Did the user ask Copilot<br/>or a named agent?"}
+    Q1 -->|Yes| ASK["Ask"]
+    Q1 -->|No| Q2{"Is the work specific to<br/>one connected system?"}
+    Q2 -->|No| RET["Retrieve"]
+    Q2 -->|Yes| Q3{"Does the agent need to<br/>find the items first?"}
+    Q3 -->|Yes| BOTH["Retrieve, then entity tools"]
+    Q3 -->|No| ET["Entity tools"]
 ```
 
 | Prompt | Use |
