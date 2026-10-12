@@ -92,20 +92,47 @@ flowchart TD
     Q2 -->|"Evidence across sources,<br/>then depth or action in one"| BOTH["Retrieve, then entity tools"]
 ```
 
-| Prompt | Use |
-| --- | --- |
-| "Ask Copilot what changed on the Contoso account this week." | Ask |
-| "Ask the Sales Insights agent which Q4 deals are at risk." | Ask, with that agent |
-| "Ask that same agent which of those deals is most urgent." | Ask, continuing the same conversation |
-| "What changed on the Contoso account this week?" | Retrieve, because the user didn't ask for Copilot |
-| "Investigate the Contoso escalation and prepare a response plan." | Retrieve |
-| "Summarize customer feedback on telemetry from Jira, Slack, and email." | Retrieve, scoped to those sources |
-| "What does our ServiceNow KB say about VPN certificate errors?" | Retrieve, scoped to ServiceNow |
-| "Ask Copilot whether ServiceNow ticket SNW-4421 met its SLA." | Ask, pointed at that ticket |
-| "Show the full activity history of the Fabrikam deal in HubSpot." | Entity tools |
-| "List all open P1 Jira issues in project TEL." | Entity tools |
-| "Set the next step on the Fabrikam deal to 'Security review on Oct 20'." | Entity tools, after the user confirms |
-| "Prepare the Q4 pipeline review and update next steps where they're clear." | Retrieve, then entity tools |
+### Examples
+
+**Ask**
+
+| Prompt | Connectors | How |
+| --- | --- | --- |
+| "Ask Copilot what changed on the Contoso account this week." | All connected, such as Salesforce, Slack, and Intercom | Ask Copilot, no scoping |
+| "Ask Copilot what Confluence and Jira say about the Q3 release plan." | Confluence Cloud, Jira Cloud | Ask Copilot, scoped to those Connectors |
+| "Ask Copilot what Moody's and S&P Global say about Northwind's credit outlook." | Moody's, S&P Global | Ask Copilot, scoped to those Connectors |
+| "Ask the Legal Research agent how recent rulings affect our NDA template." | LexisNexis, iManage | Ask the named agent |
+| "Ask that same agent whether those rulings apply to the Fabrikam contract." | LexisNexis, iManage | Ask, continuing the same conversation |
+
+**Retrieve**
+
+| Prompt | Connectors | How |
+| --- | --- | --- |
+| "Investigate the Contoso escalation and prepare a response plan." | ServiceNow KB, Jira Cloud, Intercom, Slack, plus Microsoft 365 | Retrieve, no scoping |
+| "What does our ServiceNow KB say about VPN certificate errors?" | ServiceNow KB | Retrieve, scoped to ServiceNow KB |
+| "Catch me up on the Atlas launch from Slack, Zoom meetings, and Confluence." | Slack, Zoom, Confluence Cloud | Retrieve, scoped to those Connectors |
+| "Compare the onboarding redesign proposals in Google Drive and Notion." | Google Drive, Notion | Retrieve, scoped to those Connectors |
+| "Find recent studies and active trials on GLP-1 drugs for heart failure." | PubMed, ClinicalTrials.gov | Retrieve, scoped to those Connectors |
+
+**Entity tools**
+
+| Prompt | Connectors | How |
+| --- | --- | --- |
+| "Show the full activity history of the Fabrikam deal in Salesforce." | Salesforce | Read the full record |
+| "List all open P1 issues in Jira project TEL." | Jira Cloud | Query every matching record |
+| "How many Shopify orders are still unfulfilled this week?" | Shopify | Count matching records |
+| "Create a GitHub issue for the login timeout bug and assign it to Priya." | GitHub | Create a record, after the user confirms |
+| "Mark invoice INV-2041 as paid in QuickBooks." | Intuit QuickBooks | Update a record, after the user confirms |
+
+**Retrieve, then entity tools**
+
+| Prompt | Connectors | How |
+| --- | --- | --- |
+| "Prepare the Q4 pipeline review and update next steps where they're clear." | HubSpot, Intercom, plus Microsoft 365 | Retrieve the evidence, then read and update each deal in HubSpot |
+| "Investigate the checkout outage and file a Jira issue with the findings." | Slack, Intercom, ServiceNow KB, Jira Cloud | Retrieve the evidence, then create the issue in Jira |
+| "Triage incident INC-4421 using similar incidents and known fixes, then update it." | ServiceNow KB, ServiceNow | Retrieve related incidents and fixes, then update the ticket in ServiceNow |
+| "Find our matters affected by the new data privacy ruling and flag them in iManage." | LexisNexis, iManage | Retrieve the ruling and affected matters, then update the matters in iManage |
+| "Review vendor disputes from email and Slack, then put the matching Xero bills on hold." | Slack, Xero, plus Microsoft 365 | Retrieve the disputes, then read and update each bill in Xero |
 
 **Common mistakes to avoid:**
 - Calling Ask to gather information the agent will reason over itself.
