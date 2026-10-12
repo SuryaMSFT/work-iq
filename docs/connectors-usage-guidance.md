@@ -6,10 +6,16 @@ three Work IQ capabilities: Ask, Retrieve, and Tools.
 
 ## When to use what
 
-**Use Ask when the user wants Copilot or another agent to do the work.** Ask
-returns a finished answer, and the agent passes it on to the user. Use Ask
-when the user explicitly asks for Copilot or a named agent. Also use it when
-the host only needs to show an answer, for example a Copilot bot in Slack.
+**Use Ask only when the user deliberately hands the question to Copilot or
+another agent.** That happens in three cases:
+- The user explicitly asks for Copilot's answer, as in "Ask Copilot...".
+- The user names a particular agent.
+- Retrieve can't be used, the agent explains why, and the user chooses to have
+  Copilot answer instead.
+
+Ask returns that agent's answer. The calling agent presents it as the other
+agent's answer and doesn't claim to have checked it. A question, summary, or
+investigation by itself isn't a reason to use Ask; use Retrieve for those.
 
 **Use Retrieve when the agent needs information to reason with.** Retrieve
 returns relevant content with citations from across the user's sources.
@@ -29,6 +35,8 @@ or make the changes.
 | --- | --- |
 | "Ask Copilot what changed on the Contoso account this week." | Ask |
 | "Ask the Sales Insights agent which Q4 deals are at risk." | Ask, with that agent |
+| "Ask that same agent which of those deals is most urgent." | Ask, continuing the same conversation |
+| "What changed on the Contoso account this week?" | Retrieve, because the user didn't ask for Copilot |
 | "Investigate the Contoso escalation and prepare a response plan." | Retrieve |
 | "Summarize customer feedback on telemetry from Jira, Slack, and email." | Retrieve, scoped to those sources |
 | "What does our ServiceNow KB say about VPN certificate errors?" | Retrieve, scoped to ServiceNow |
@@ -40,6 +48,12 @@ or make the changes.
 **Common mistakes to avoid:**
 - Calling Ask to gather information the agent will reason over itself.
 - Sending Retrieve results to Ask to be summarized again.
+- Calling Ask automatically when Retrieve is unavailable, fails, or comes back
+  empty. Offer Ask to the user as an option instead.
+- Calling Retrieve or listing agents before an "Ask Copilot..." request. Call
+  Ask directly.
+- Treating Ask's answer as proof that something was done. Changes are made
+  with Tools.
 - Using Retrieve to get complete lists or record IDs for updates.
 - Making many Tools calls to imitate a search.
 - Switching to a different capability after an error or a sign-in prompt.
@@ -132,6 +146,17 @@ To point Ask at a specific Connector record, use `resources`.
 }
 ```
 
+To use a named agent, pass its exact `agentId`. Reuse an ID you already have,
+or look it up with `list_agents`. Never guess an ID. If the agent can't be
+found, don't quietly use Copilot instead. For a follow-up question to the same
+agent, pass the `conversationId` from the previous answer.
+
+*"Ask the Sales Insights agent which Q4 deals are at risk."*
+
+```json
+{ "question": "Which Q4 deals are at risk and why?", "agentId": "<id from list_agents>" }
+```
+
 ### Tools
 
 Connector operations appear in `search_paths` results next to Microsoft 365
@@ -171,3 +196,9 @@ makes them with `do_action`.
    agent? Retrieve doesn't allow scoping in that case.
 8. **Availability.** When will Ask scoping and Connector Tools reach tenants
    that use third-party agent hosts?
+9. **The two skills choose Ask differently.** This guide follows
+   `workiq-preview`: use Retrieve by default and Ask only when the user hands
+   the question off. The public `workiq` skill does the opposite and prefers
+   Ask for summaries and reasoning. Should both skills follow the same rule?
+   And should hosts that only display an answer, such as a Copilot bot in
+   Slack, be treated as handing off by default?
