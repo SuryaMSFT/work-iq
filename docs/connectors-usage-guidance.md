@@ -44,7 +44,8 @@ agent's work. An ordinary question, summary, or investigation isn't a reason
 to use Ask, even when it spans several connected systems. Use Retrieve for
 those.
 
-**Use Retrieve when the task needs semantic understanding across sources.**
+**Use Retrieve when the task needs to gather evidence and build semantic
+understanding across sources.**
 Retrieve finds content by meaning across connected systems and Microsoft 365,
 such as ServiceNow KB articles, Jira issues, Intercom conversations, Slack
 messages, Outlook mail, and similar content from other connected systems. It
@@ -81,7 +82,7 @@ flowchart TD
     Q1{"Did the user ask Copilot<br/>or a named agent?"}
     Q1 -->|Yes| ASK["Ask"]
     Q1 -->|No| Q2{"What does the task need?"}
-    Q2 -->|"Semantic understanding<br/>across sources"| RET["Retrieve<br/>scoped to one or more<br/>Connectors if needed"]
+    Q2 -->|"Evidence and semantic<br/>understanding across sources"| RET["Retrieve<br/>scoped to one or more<br/>Connectors if needed"]
     Q2 -->|"Depth, completeness, or<br/>write actions in one source"| ET["Entity tools"]
     Q2 -->|Both| BOTH["Retrieve, then entity tools"]
 ```
