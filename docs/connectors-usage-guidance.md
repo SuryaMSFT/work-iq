@@ -9,8 +9,15 @@ few well-known systems, but the same guidance applies to any connected system.
 
 ## When to use what
 
+Work IQ gives agents access to more than 400 Connectors to enterprise systems.
+Any Connector that's already connected in a Copilot surface is available
+through Work IQ, with no extra setup. Agents can list all available
+Connectors, and the ones that are connected, with `<placeholder API>`.
+Connected sources take part in Ask and Retrieve, and their operations are
+available through entity tools.
+
 The same rules apply whether the data lives in Microsoft 365 or in a
-Connector. What matters is what the agent needs back.
+Connector. What matters is what the task needs.
 
 **Use Ask to delegate a question to Copilot or another agent.** Use it only
 when the user asks for that agent's answer, either by saying "Ask Copilot..."
