@@ -6,28 +6,40 @@ three Work IQ capabilities: Ask, Retrieve, and Tools.
 
 ## When to use what
 
+The same rules apply whether the data lives in Microsoft 365 or in a
+Connector. What matters is what the agent needs back.
+
 **Use Ask to delegate a question to Copilot or another agent.** Use it only
 when the user asks for that agent's answer, either by saying "Ask Copilot..."
-or by naming a specific agent. If Retrieve isn't available, the agent can offer
-Ask as an option, but it uses Ask only if the user agrees.
+or by naming a specific agent. Copilot then works across the user's Microsoft
+365 content and connected systems itself. For example, it can combine Slack
+threads, HubSpot deal notes, and Outlook mail into one answer. The user can
+limit which Connectors Copilot uses. If Retrieve isn't available, the agent
+can offer Ask as an option, but it uses Ask only if the user agrees.
 
 Ask returns that agent's answer, which the calling agent passes on as the other
 agent's work. An ordinary question, summary, or investigation isn't a reason
-to use Ask. Use Retrieve for those.
+to use Ask, even when it spans several connected systems. Use Retrieve for
+those.
 
-**Use Retrieve when the agent needs information to reason with.** Retrieve
-returns relevant content with citations from across the user's sources.
-The agent then works out the answer itself. Use Retrieve for investigations,
-summaries, comparisons, and catch-up. It's especially useful when the agent
-doesn't know which system or record has the information.
+**Use Retrieve when the agent needs information from connected systems to
+reason with.** Retrieve returns relevant content with citations, such as
+ServiceNow KB articles, Jira issues, Intercom conversations, or Slack messages.
+It can include Microsoft 365 content in the same results. The agent then
+works out the answer itself. Use Retrieve for investigations, summaries,
+comparisons, and catch-up across systems. It's the right choice when the agent
+doesn't know which record holds the answer.
 
-**Use Tools when the agent needs exact records or needs to make a change.**
-Tools read and write records directly in a specific system. Use them for a
-known record, a complete or filtered list, or a create or update.
+**Use Tools when the agent needs exact records from a connected system or
+needs to make a change there.** Tools read and write records directly in that
+system. Examples include a specific HubSpot deal, every open P1 issue in a Jira
+project, or an update to a ServiceNow ticket. Use them for a known record, a
+complete or filtered list, or a create or update.
 
 **Use Retrieve and then Tools when the agent must find something first and
-then act on it.** Retrieve finds what matters, and Tools read the full records
-or make the changes.
+then act on it.** For example, Retrieve finds the at-risk deals from CRM notes,
+mail, and support history. Tools then read each full HubSpot record and update
+its next step.
 
 | Prompt | Use |
 | --- | --- |
