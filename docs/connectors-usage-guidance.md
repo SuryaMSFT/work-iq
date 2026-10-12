@@ -40,6 +40,7 @@ or make the changes.
 | "Investigate the Contoso escalation and prepare a response plan." | Retrieve |
 | "Summarize customer feedback on telemetry from Jira, Slack, and email." | Retrieve, scoped to those sources |
 | "What does our ServiceNow KB say about VPN certificate errors?" | Retrieve, scoped to ServiceNow |
+| "Ask Copilot whether ServiceNow ticket SNW-4421 met its SLA." | Ask, pointed at that ticket |
 | "Get HubSpot deal 18234 with its stage, contacts, and next step." | Tools |
 | "List all open P1 Jira issues in project TEL." | Tools |
 | "Set the next step on the Fabrikam deal to 'Security review on Oct 20'." | Tools, after the user confirms |
@@ -56,14 +57,16 @@ or make the changes.
   with Tools.
 - Using Retrieve to get complete lists or record IDs for updates.
 - Making many Tools calls to imitate a search.
-- Switching to a different capability after an error or a sign-in prompt.
+- Switching between Ask and Retrieve on your own after an error, an empty
+  result, or a sign-in prompt.
 
 ## How to use them
 
 ### Scoping
 
-By default, don't scope. Ask and Retrieve already search every source the
-user has connected. A topic such as "Contoso deals" isn't a reason to scope.
+By default, don't scope. Without a scope, Ask and Retrieve use all the
+sources they can reach. A topic such as "Contoso deals" isn't a reason to
+scope.
 
 Scope only in these cases:
 - The user names a source, such as "check Slack and the Outlook thread".
@@ -80,8 +83,14 @@ Connector the user named isn't connected, tell the user.
 
 ### Retrieve
 
-When the information may be in a Connector, set `strategy` to `copilot`. To
-scope, list the sources in `capabilities`: Connectors go under
+Always set `strategy` explicitly. Use `copilot` when the request needs
+evidence from a Connector, including requests that also need Microsoft 365
+content. Otherwise use `grounding`, which is the default for ordinary or
+unspecified sources. Don't choose `copilot` just because you don't know where
+the information is. Retrieve with `copilot` still returns evidence; it isn't
+Ask.
+
+To scope, list the sources in `capabilities`. Connectors go under
 `GraphConnectors`, and Microsoft 365 sources use their own names, such as
 `Email`.
 
@@ -117,25 +126,34 @@ Inside a Connector, you can narrow to a container, path, or item.
 
 ### Ask
 
-To scope Ask to Connectors, use `dataSources.connectorIds`:
+Use Ask only for a request the user has handed to Copilot or a named agent.
+Don't call Retrieve or `list_agents` first for an "Ask Copilot..." request.
+Leave out `agentId` to use Copilot.
+
+Scope Ask only when the user's request names sources. To limit which
+Connectors Ask uses, set `dataSources.connectorIds`:
 - Leave `dataSources` out to use all of the user's Connectors.
 - Pass an empty list to use no Connectors.
 - Pass IDs to use only those Connectors.
 
 `dataSources` doesn't limit Microsoft 365 content. To focus on a Microsoft 365
-source, name it in the question.
+source, name it in the question. Never send Retrieve parameters such as
+`query`, `strategy`, or `capabilities` to Ask.
 
-*"Did we commit to moving the Contoso launch to Nov 15? Check the internal Slack
-discussion and the latest Outlook thread with the customer."*
+*"Ask Copilot whether we committed to moving the Contoso launch to Nov 15.
+Have it check the internal Slack discussion and the latest Outlook thread with
+the customer."*
 
 ```json
 {
-  "question": "Using our internal Slack discussion and the latest Outlook thread with Contoso, did we commit to moving the launch to November 15?",
+  "question": "Using our internal Slack discussion and the latest Outlook thread with Contoso, did we commit to moving the launch to November 15? Cite both.",
   "dataSources": { "connectorIds": ["<slack-id>"] }
 }
 ```
 
-To point Ask at a specific Connector record, use `resources`.
+To point Ask at specific items, use `resources` for Connector records or
+`fileUrls` for OneDrive and SharePoint files. Don't widen a request about one
+item into a broad search.
 
 *"Ask Copilot whether ServiceNow ticket SNW-4421 was resolved within SLA."*
 
@@ -148,14 +166,22 @@ To point Ask at a specific Connector record, use `resources`.
 
 To use a named agent, pass its exact `agentId`. Reuse an ID you already have,
 or look it up with `list_agents`. Never guess an ID. If the agent can't be
-found, don't quietly use Copilot instead. For a follow-up question to the same
-agent, pass the `conversationId` from the previous answer.
+found or the match is unclear, stop or ask the user to choose; don't quietly
+use Copilot instead. For a follow-up to the same agent, pass the
+`conversationId` from its previous answer. Don't reuse that ID with a
+different agent or for an unrelated task.
 
 *"Ask the Sales Insights agent which Q4 deals are at risk."*
 
 ```json
 { "question": "Which Q4 deals are at risk and why?", "agentId": "<id from list_agents>" }
 ```
+
+Present the answer as that agent's answer and keep its citations. Don't
+claim you checked the sources yourself. If Ask fails, don't switch to Retrieve
+on your own. Explain the alternative and let the user decide. If the user also
+asked for a change, such as updating a record, Ask's answer doesn't make the
+change; use Tools after the user confirms.
 
 ### Tools
 
