@@ -1,76 +1,107 @@
 # Using Connectors with Work IQ: when to use what, and how
 
-Connectors let agents work with data in systems such as Jira, ServiceNow,
-HubSpot, Slack, and Intercom, alongside Microsoft 365. Agents use them through
-three Work IQ capabilities: Ask, Retrieve, and Tools.
+This guide covers data in connected systems such as Jira, ServiceNow,
+HubSpot, Salesforce, Slack, and Intercom. Microsoft 365 data such as mail,
+calendar, and Teams follows the existing Work IQ skill guidance.
+
+Agents reach Connector data in three ways: Ask, Retrieve, and Tools.
 
 ## When to use what
 
-The same rules apply whether the data lives in Microsoft 365 or in a
-Connector. What matters is what the agent needs back.
+### Ask: the user wants Copilot or another agent to answer
 
-**Use Ask to delegate a question to Copilot or another agent.** Use it only
-when the user asks for that agent's answer, either by saying "Ask Copilot..."
-or by naming a specific agent. Copilot then works across the user's Microsoft
-365 content and connected systems itself. For example, it can combine Slack
-threads, HubSpot deal notes, and Outlook mail into one answer. Ask can be
-scoped to specific Connectors (see [Scoping](#scoping)). If Retrieve isn't
-available, the agent can offer Ask as an option, but it uses Ask only if the
-user agrees.
+Use Ask only when the user asks for Copilot's answer ("Ask Copilot...") or
+names a specific agent. Copilot then does the work itself, combining
+Connector content such as Slack threads and HubSpot notes with the user's
+Microsoft 365 content. The calling agent passes the answer on as Copilot's
+answer. Ask can be scoped to specific Connectors (see [Scoping](#scoping)).
 
-Ask returns that agent's answer, which the calling agent passes on as the other
-agent's work. An ordinary question, summary, or investigation isn't a reason
-to use Ask, even when it spans several connected systems. Use Retrieve for
-those.
+Any other question goes to Retrieve or Tools, even when it spans several
+systems. If those can't be used, the agent can offer Ask, but it calls Ask
+only if the user agrees.
 
-**Use Retrieve when the agent needs information from connected systems to
-reason with.** Retrieve returns relevant content with citations, such as
-ServiceNow KB articles, Jira issues, Intercom conversations, or Slack messages.
-It can include Microsoft 365 content in the same results. The agent then
-works out the answer itself. Use Retrieve for investigations, summaries,
-comparisons, and catch-up across systems. It's the right choice when the agent
-doesn't know which record holds the answer. Retrieve can be scoped to specific
+### Retrieve: find what the content says
+
+Retrieve searches the content of connected systems by relevance. It returns
+the most useful passages with citations, such as ServiceNow KB articles,
+Confluence pages, Intercom conversations, Jira issue descriptions and
+comments, or Slack threads. Use it when:
+- **The question is about meaning, not fields.** For example, "What do our KB
+  articles say about VPN certificate errors?" or "What are customers
+  complaining about in support tickets?"
+- **The answer may be spread across systems,** or the agent doesn't know which
+  system has it.
+- **The agent needs evidence to reason with,** not a complete data set.
+
+Retrieve returns the most relevant results, not all of them, and it returns
+excerpts rather than full records. Retrieve can be scoped to specific
 Connectors and Microsoft 365 sources (see [Scoping](#scoping)).
 
-**Use Tools when the agent needs exact records from a connected system or
-needs to make a change there.** Tools read and write records directly in that
-system. Examples include a specific HubSpot deal, every open P1 issue in a Jira
-project, or an update to a ServiceNow ticket. Use them for a known record, a
-complete or filtered list, or a create or update.
+### Tools: work with the system's own data and operations
 
-**Use Retrieve and then Tools when the agent must find something first and
-then act on it.** For example, Retrieve finds the at-risk deals from CRM notes,
-mail, and support history. Tools then read each full HubSpot record and update
-its next step.
+A Connector's Tools are the system's own operations, such as search, query,
+list, get, create, and update. They aren't only for records you already know.
+Use them when:
+- **The request can be described with filters on fields** such as status,
+  owner, priority, stage, amount, or date. For example, "Open P1 bugs in TEL
+  assigned to me" or "Deals in Negotiation closing this quarter."
+- **The answer must be complete or counted.** For example, "How many tickets
+  were escalated last week?" or "List every deal over $100K." Retrieve can't
+  promise completeness.
+- **The agent needs the full record,** including all fields, linked records,
+  history, comments, or attachments. For example, "Show the full timeline of
+  INC0012345."
+- **The current state matters.** For example, "Is TEL-482 still blocked?"
+  Tools read directly from the system.
+- **The request uses the system's own terms,** such as a saved filter, a JQL
+  query, a report, or a pipeline view. For example, "Run my 'Escalations this
+  week' filter in Jira."
+- **The user wants a change,** such as create, update, comment, assign, or
+  transition. Tools make changes only after the user confirms.
+
+Each Tools call works with one system. When a task spans several systems, the
+agent combines the results itself.
+
+### Retrieve and Tools together
+
+Many tasks need both. The agent uses Retrieve to find what matters, then uses
+Tools to get exact facts or to act. For example, for "Prepare the Q4 pipeline
+review and update next steps," Retrieve finds the at-risk deals and the
+reasons behind them in CRM notes, mail, and support history. Tools then read
+each full HubSpot deal and update its next step after the user confirms.
+
+### A quick test
+
+- If a set of field filters describes what the agent needs, use Tools.
+- If the agent is looking for what something says or means, use Retrieve.
+- If the user asked Copilot or a named agent to answer, use Ask.
 
 | Prompt | Use |
 | --- | --- |
 | "Ask Copilot what changed on the Contoso account this week." | Ask |
 | "Ask the Sales Insights agent which Q4 deals are at risk." | Ask, with that agent |
-| "Ask that same agent which of those deals is most urgent." | Ask, continuing the same conversation |
 | "What changed on the Contoso account this week?" | Retrieve, because the user didn't ask for Copilot |
-| "Investigate the Contoso escalation and prepare a response plan." | Retrieve |
-| "Summarize customer feedback on telemetry from Jira, Slack, and email." | Retrieve, scoped to those sources |
 | "What does our ServiceNow KB say about VPN certificate errors?" | Retrieve, scoped to ServiceNow |
-| "Ask Copilot whether ServiceNow ticket SNW-4421 met its SLA." | Ask, pointed at that ticket |
-| "Get HubSpot deal 18234 with its stage, contacts, and next step." | Tools |
-| "List all open P1 Jira issues in project TEL." | Tools |
-| "Set the next step on the Fabrikam deal to 'Security review on Oct 20'." | Tools, after the user confirms |
+| "Summarize customer feedback on telemetry from Jira, Slack, and Intercom." | Retrieve, scoped to those Connectors |
+| "List all open P1 Jira issues in project TEL assigned to me." | Tools, using a filtered search |
+| "How many HubSpot deals over $100K are closing this quarter?" | Tools, because the result must be complete |
+| "Is TEL-482 still blocked, and who owns it?" | Tools, because the result must be current |
+| "Show the full activity history of the Fabrikam deal." | Tools, for the full record |
+| "Move INC0012345 to Resolved with a note." | Tools, after the user confirms |
+| "Find the Jira bugs customers are most upset about and raise their priority." | Retrieve, then Tools |
 | "Prepare the Q4 pipeline review and update next steps where they're clear." | Retrieve, then Tools |
 
 **Common mistakes to avoid:**
 - Calling Ask to gather information the agent will reason over itself.
 - Sending Retrieve results to Ask to be summarized again.
-- Calling Ask automatically when Retrieve is unavailable, fails, or comes back
-  empty. Offer Ask to the user as an option instead.
-- Calling Retrieve or listing agents before an "Ask Copilot..." request. Call
-  Ask directly.
+- Using Retrieve for counts, complete lists, current status, or record IDs for
+  updates.
+- Paging through every record with Tools to find something by meaning. Use
+  Retrieve instead.
 - Treating Ask's answer as proof that something was done. Changes are made
   with Tools.
-- Using Retrieve to get complete lists or record IDs for updates.
-- Making many Tools calls to imitate a search.
-- Switching between Ask and Retrieve on your own after an error, an empty
-  result, or a sign-in prompt.
+- Switching between Ask, Retrieve, and Tools on your own after an error, an
+  empty result, or a sign-in prompt.
 
 ## How to use them
 
