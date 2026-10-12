@@ -73,9 +73,15 @@ For example, use entity tools to get a deal's complete activity history from a
 CRM such as Salesforce or HubSpot, list every open P1 issue in a tracker such
 as Jira, or update a ticket in a service desk such as ServiceNow.
 
-**Use Retrieve and then entity tools when the task needs both.** For example,
-Retrieve finds the at-risk deals from CRM notes, mail, and support history.
-Entity tools then read each full CRM record and update its next step.
+**Use Retrieve and then entity tools when the task gathers evidence across
+sources and then goes deep or acts in one system.** This is common for
+reviews, triage, and follow-ups, such as:
+- A pipeline review that weighs CRM notes, mail, and support history, then
+  reads each at-risk deal in full and updates its next step.
+- An escalation investigation that pulls together Slack threads, support
+  conversations, and KB articles, then files a Jira issue with the findings.
+- Ticket triage that finds related incidents and known fixes, then updates
+  the ServiceNow ticket with the resolution.
 
 ```mermaid
 flowchart TD
@@ -84,7 +90,7 @@ flowchart TD
     Q1 -->|No| Q2{"What does the task need?"}
     Q2 -->|"Evidence and semantic<br/>understanding across sources"| RET["Retrieve<br/>scoped to one or more<br/>Connectors if needed"]
     Q2 -->|"Depth, completeness, or<br/>write actions in one source"| ET["Entity tools"]
-    Q2 -->|Both| BOTH["Retrieve, then entity tools"]
+    Q2 -->|"Evidence across sources,<br/>then depth or action in one"| BOTH["Retrieve, then entity tools"]
 ```
 
 | Prompt | Use |
