@@ -6,16 +6,14 @@ three Work IQ capabilities: Ask, Retrieve, and Tools.
 
 ## When to use what
 
-**Use Ask only when the user deliberately hands the question to Copilot or
-another agent.** That happens in three cases:
-- The user explicitly asks for Copilot's answer, as in "Ask Copilot...".
-- The user names a particular agent.
-- Retrieve can't be used, the agent explains why, and the user chooses to have
-  Copilot answer instead.
+**Use Ask to delegate a question to Copilot or another agent.** Use it only
+when the user asks for that agent's answer, either by saying "Ask Copilot..."
+or by naming a specific agent. If Retrieve isn't available, the agent can offer
+Ask as an option, but it uses Ask only if the user agrees.
 
-Ask returns that agent's answer. The calling agent presents it as the other
-agent's answer and doesn't claim to have checked it. A question, summary, or
-investigation by itself isn't a reason to use Ask; use Retrieve for those.
+Ask returns that agent's answer, which the calling agent passes on as the other
+agent's work. An ordinary question, summary, or investigation isn't a reason
+to use Ask. Use Retrieve for those.
 
 **Use Retrieve when the agent needs information to reason with.** Retrieve
 returns relevant content with citations from across the user's sources.
