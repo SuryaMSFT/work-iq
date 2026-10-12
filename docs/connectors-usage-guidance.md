@@ -57,6 +57,22 @@ and then act on it.** For example, Retrieve finds the at-risk deals from CRM
 notes, mail, and support history. Entity tools then read each full CRM record
 and update its next step.
 
+```mermaid
+flowchart TD
+    A[User request] --> B{Did the user ask for Copilot's<br/>or a named agent's answer?}
+    B -- Yes --> ASK[Ask<br/>scoped to Connectors if needed]
+    B -- No --> C{Does the work need full records,<br/>every matching record, a count,<br/>or a change in one connected system?}
+    C -- No --> RET[Retrieve<br/>scoped to sources if needed]
+    C -- Yes --> D{Does the agent first need to find<br/>the relevant items by meaning<br/>or across sources?}
+    D -- Yes --> RT[Retrieve, then entity tools]
+    D -- No --> ET[Entity tools<br/>search_paths, get_schema, then call]
+    RET --> E{Is Retrieve available?}
+    E -- No --> F[Explain why and offer Ask.<br/>Use Ask only if the user agrees.]
+    ET --> G{Does it change data?}
+    RT --> G
+    G -- Yes --> H[Confirm the exact change<br/>with the user first]
+```
+
 | Prompt | Use |
 | --- | --- |
 | "Ask Copilot what changed on the Contoso account this week." | Ask |
