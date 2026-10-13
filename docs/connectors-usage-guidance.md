@@ -7,6 +7,33 @@ Ask, Retrieve, and entity tools (`search_paths`, `get_schema`,
 `call_function`, `do_action`, and others). The examples in this guide use a
 few well-known systems, but the same guidance applies to any connected system.
 
+## Purpose
+
+This document defines the intended agent behavior for using Copilot
+Connectors through Work IQ APIs, including when and how to use Ask, Retrieve,
+and entity tools. This guidance will be incorporated into the Work IQ skill
+and relevant tool definitions (Ask, Retrieve, `search_paths`, `get_schema`,
+and others). Our approach is to establish a baseline through Work IQ skill
+and tool definition updates, then iteratively refine them based on evaluation
+results.
+
+## Current baseline for Microsoft 365 sources
+
+Today the Work IQ skill already defines how agents use Microsoft 365 sources
+such as mail, calendar, Teams, files, people, and Planner. Agents use Retrieve
+by default to gather evidence for questions, summaries, comparisons, and
+catch-up, and reason over the results themselves. Retrieve uses the grounding
+strategy for Microsoft 365 content and switches to the broader copilot
+strategy only when a request needs sources beyond it, such as Connectors.
+Agents use Ask only when the user explicitly asks for Copilot's or a named
+agent's answer, never as an automatic fallback when Retrieve isn't available.
+They use entity tools on well-known paths such as `/me/messages` and
+`/me/events` to read exact items, list or filter collections, and create,
+update, or act on items, with `search_paths` and `get_schema` used for
+unfamiliar paths and request bodies, and with user confirmation before any
+change. Connectors follow the same model. This document describes how it
+extends to them.
+
 ## When to use what
 
 Work IQ gives agents access to more than 400 Connectors to enterprise systems.
