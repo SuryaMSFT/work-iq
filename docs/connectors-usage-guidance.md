@@ -19,20 +19,30 @@ results.
 
 ## Current baseline for Microsoft 365 sources
 
-Today the Work IQ skill already defines how agents use Microsoft 365 sources
-such as mail, calendar, Teams, files, people, and Planner. Agents use Retrieve
-by default to gather evidence for questions, summaries, comparisons, and
-catch-up, and reason over the results themselves. Retrieve uses the grounding
-strategy for Microsoft 365 content and switches to the broader copilot
-strategy only when a request needs sources beyond it, such as Connectors.
-Agents use Ask only when the user explicitly asks for Copilot's or a named
-agent's answer, never as an automatic fallback when Retrieve isn't available.
-They use entity tools on well-known paths such as `/me/messages` and
-`/me/events` to read exact items, list or filter collections, and create,
-update, or act on items, with `search_paths` and `get_schema` used for
-unfamiliar paths and request bodies, and with user confirmation before any
-change. Connectors follow the same model. This document describes how it
-extends to them.
+The Work IQ skill already defines how agents use Microsoft 365 sources: mail,
+calendar, Teams, files, people, and Planner. Agents use Retrieve first for
+ordinary questions, summaries, comparisons, requirements, and catch-up that
+they answer themselves. Retrieve returns evidence with citations, and the
+agent writes the answer from it. It uses the grounding strategy by default,
+and the copilot strategy only when the task requires a source outside the
+Microsoft 365 index. Not knowing where content lives isn't a reason to use
+copilot. Agents use Ask only for intentional delegation, when the user asks
+for Copilot's answer or a particular agent's answer, and never as an automatic
+fallback when Retrieve is unavailable or comes back empty. Agents use entity
+tools (`fetch`, `create_entity`, `update_entity`, `delete_entity`,
+`do_action`, `call_function`, and `fetch_blob`) for exact items, filtered
+lists, complete collections, downloads, and changes, and confirm with the user
+before any change. For well-known paths such as `/me/messages` and
+`/me/events`, agents call entity tools directly. When the path or request
+shape is unknown, they use the two discovery tools: `search_paths` finds
+matching entity paths and their supported operations, and `get_schema` returns
+the input schema for a specific path and operation.
+
+Connectors appear in this baseline only as a broad `GraphConnectors` source
+in Retrieve, which requires the copilot strategy. The skill doesn't yet cover
+scoping to specific Connectors, using Connectors through Ask, or discovering
+and calling Connector operations through entity tools. This document fills
+those gaps.
 
 ## When to use what
 
