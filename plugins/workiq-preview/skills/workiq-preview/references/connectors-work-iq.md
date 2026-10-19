@@ -23,17 +23,17 @@ requests, including informal names such as "the KB", "our wiki", "Atlassian",
 `search_paths` queries. Which Connectors are connected depends on the tenant;
 being listed here doesn't mean a Connector is connected.
 
-| Domain | Connectors | Typical content | Typical routing |
-| --- | --- | --- | --- |
-| Files and knowledge | Google Drive, intranet sites, ServiceNow KB, Notion | Documents, internal and line-of-business sites, knowledge articles, wiki pages | `retrieve` for answers, how-tos, and policies; entity tools to read one full article or page |
-| Communication, meetings, and people | Slack, Zoom, Workday | Channel messages and threads, meetings and recordings, worker profiles, org, and time off | `retrieve` for discussions and decisions; entity tools for exact people or HR records |
-| Developer tools | Jira Cloud, GitHub, Confluence Cloud, Azure DevOps | Issues, work items, pull requests, repositories, design and wiki pages | `retrieve` for themes and related items; entity tools for filtered lists, counts, and updates |
-| Financial services | LSEG, Moody's, S&P Global | Market data, research, credit ratings, and risk analysis | `retrieve` for research and outlook evidence; entity tools for specific data points |
-| CRM and customer support | Salesforce, HubSpot, Intercom | Accounts, opportunities, deals, contacts, activity, and support conversations | `retrieve` for account context and customer sentiment; entity tools for full records, pipeline lists, and updates |
-| Legal | iManage, NetDocuments, LexisNexis, Harvey | Matter documents, contracts, case law, and legal research | `retrieve` for clauses, precedents, and research; entity tools to open a specific matter or document |
-| Accounting | Xero, Aiwyn Tax, SAP S/4HANA | Ledgers, invoices, payments, tax returns, and ERP records | Entity tools for exact amounts, balances, and filtered lists; `retrieve` for explanations and related notes |
-| Healthcare and life sciences | PubMed, ClinicalTrials.gov | Biomedical literature and clinical trial records | `retrieve` for literature and trial evidence; entity tools for a specific trial or article |
-| Small business | Shopify, Intuit QuickBooks, Stripe | Products, orders, inventory, invoices, payments, and subscriptions | Entity tools for orders, payments, and record updates; `retrieve` for trends and related discussions |
+| Domain | Connectors | Typical content |
+| --- | --- | --- |
+| Files and knowledge | Google Drive, intranet sites, ServiceNow KB, Notion | Documents, internal and line-of-business sites, knowledge articles, wiki pages |
+| Communication, meetings, and people | Slack, Zoom, Workday | Channel messages and threads, meetings and recordings, worker profiles, org, and time off |
+| Developer tools | Jira Cloud, GitHub, Confluence Cloud, Azure DevOps | Issues, work items, pull requests, repositories, design and wiki pages |
+| Financial services | LSEG, Moody's, S&P Global | Market data, research, credit ratings, and risk analysis |
+| CRM and customer support | Salesforce, HubSpot, Intercom | Accounts, opportunities, deals, contacts, activity, and support conversations |
+| Legal | iManage, NetDocuments, LexisNexis, Harvey | Matter documents, contracts, case law, and legal research |
+| Accounting | Xero, Aiwyn Tax, SAP S/4HANA | Ledgers, invoices, payments, tax returns, and ERP records |
+| Healthcare and life sciences | PubMed, ClinicalTrials.gov | Biomedical literature and clinical trial records |
+| Small business | Shopify, Intuit QuickBooks, Stripe | Products, orders, inventory, invoices, payments, and subscriptions |
 
 ## Choose the API
 
