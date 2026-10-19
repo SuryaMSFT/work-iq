@@ -17,11 +17,9 @@ confirmation, denial, and [recovery](troubleshooting.md) rules still apply.
 ## Common Connectors
 
 The Connector catalog includes the Connectors below, but isn't limited to them;
-any of the more than 400 Connectors can be connected. Recognize these in
-requests, including informal names such as "the KB", "our wiki", "Atlassian",
-"the CRM", or "our intranet", and use the Connector name in `retrieve` and
-`search_paths` queries. Which Connectors are connected depends on the tenant;
-being listed here doesn't mean a Connector is connected.
+any of the more than 400 Connectors can be connected. Which Connectors are
+connected depends on the tenant; being listed here doesn't mean a Connector is
+connected.
 
 | Domain | Connectors | Typical content |
 | --- | --- | --- |
