@@ -65,7 +65,7 @@ conversation continuation parameter; include the necessary context in `query`.
 | Indexed M365 content: SharePoint, OneDrive, Teams, Outlook | Explicit `grounding` |
 | Required federated connectors, external sources, or MCP tools, including mixed indexed/external scope | Explicit `copilot` directly; no redundant Grounding probe |
 | Dataverse or GraphConnectors capability required | `copilot`; incompatible with `grounding` |
-| Content in connected systems: a named Connector (Jira, Salesforce, ServiceNow, Slack, and others), or work items, tickets, deals, or cases with no system named | Explicit `copilot`; `grounding` returns no Connector content. See [Connectors](connectors-work-iq.md) |
+| Content in connected systems: a named Connector (ServiceNow KB, Jira Cloud, Confluence, intranet sites, and others), or work items, tickets, deals, or cases with no system named | Explicit `copilot`; `grounding` returns no Connector content. See [Connectors](connectors-work-iq.md) |
 | User explicitly requests Copilot retrieval or search beyond the M365 index | Explicit `copilot`, subject to other source restrictions |
 | Grounding-only or indexed-M365-only | `grounding`; no broader fallback without permission to change scope |
 | Grounding-only plus a required unsupported capability/source | Explain the conflict and ask which requirement to change; never silently prune capabilities |

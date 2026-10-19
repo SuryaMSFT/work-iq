@@ -50,7 +50,7 @@ Do not invent paths absent from the result.
 
 ## Copilot Connectors
 
-Connector operations (Jira, Salesforce, ServiceNow, and others) always need
+Connector operations (ServiceNow, Jira Cloud, Confluence, and others) always need
 discovery: there are no documented known paths for them. Search for the
 task-relevant system and operation, choose the returned tool whose description
 and supported operations fit the task, then inspect its schema with

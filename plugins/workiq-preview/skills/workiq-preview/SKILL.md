@@ -1,6 +1,6 @@
 ---
 name: workiq-preview
-description: WorkIQ tools for Microsoft 365 workplace data and actions. Use for email, meetings, calendar, files, SharePoint, OneDrive, Teams, people, Planner, and connected enterprise systems through Copilot Connectors (such as Jira, Salesforce, ServiceNow, Slack). Triggers include gather requirements, summarize workplace discussions, manage meetings, create an upload session, send or draft replies, manage tasks, and discover paths or schemas. Retrieve context first with explicit Grounding when available and synthesize locally; use ask only for intentional delegation to Copilot or a known/discovered agent. Exact entities, structured workflows, writes, and downloads stay on entity tools. This skill contains instructions for the WorkIQ MCP tools and must be used beforehand to understand their usage.
+description: WorkIQ tools for Microsoft 365 workplace data and actions. Use for email, meetings, calendar, files, SharePoint, OneDrive, Teams, people, Planner, and connected enterprise systems through Copilot Connectors (such as ServiceNow KB, Jira Cloud, Confluence, and intranet sites). Triggers include gather requirements, summarize workplace discussions, manage meetings, create an upload session, send or draft replies, manage tasks, and discover paths or schemas. Retrieve context first with explicit Grounding when available and synthesize locally; use ask only for intentional delegation to Copilot or a known/discovered agent. Exact entities, structured workflows, writes, and downloads stay on entity tools. This skill contains instructions for the WorkIQ MCP tools and must be used beforehand to understand their usage.
 compatibility: >
   Uses the hosted WorkIQ MCP endpoint. No local package is required for MCP
   tool calls.
@@ -33,7 +33,7 @@ before calling. Never guess aliases or derive prefixes from a skill folder.
 | Call an OData function (delta, reminderView, named-file search) | `call_function` |
 | Download file or attachment bytes | `fetch_blob` |
 | Discover entity paths / inspect operation fields and body shape | `search_paths` / `get_schema` |
-| Semantic evidence from connected systems (Jira, Salesforce, ServiceNow, and others), including one named system, or work items and tickets with no system named | `retrieve` with `strategy: "copilot"`; see [Connectors](references/connectors-work-iq.md) |
+| Semantic evidence from connected systems (ServiceNow KB, Jira Cloud, Confluence, intranet sites, and others), including one named system, or work items and tickets with no system named | `retrieve` with `strategy: "copilot"`; see [Connectors](references/connectors-work-iq.md) |
 | Full records, exact field filters, counts, or writes in one connected system | `search_paths`, then `get_schema`, then `call_function` (reads) or `do_action` (writes); never `create_entity`, `update_entity`, or `delete_entity` |
 
 Semantic does not automatically mean `retrieve` or `ask`: exact entity URLs,

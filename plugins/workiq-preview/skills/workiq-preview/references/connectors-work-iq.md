@@ -1,10 +1,9 @@
 # Copilot Connectors
 
 WorkIQ gives agents access to more than 400 Copilot Connectors for enterprise
-systems such as Jira, Azure DevOps, GitHub, Confluence, ServiceNow, Salesforce,
-HubSpot, Intercom, Slack, Google Drive, Notion, and Workday. Any Connector that
-is already connected in a Copilot surface is available through WorkIQ with no
-extra setup:
+systems such as ServiceNow KB, Jira Cloud, Confluence, and intranet sites. Any
+Connector that is already connected in a Copilot surface is available through
+WorkIQ with no extra setup:
 
 - Connected sources take part in `ask` and in `retrieve` with `strategy: "copilot"`.
 - Their operations are available through entity tools, discovered with
@@ -14,6 +13,27 @@ The same routing rules apply whether data lives in Microsoft 365 or in a
 Connector: what matters is what the task needs. This reference adds
 Connector-specific behavior to the [quick guide](../SKILL.md). General
 confirmation, denial, and [recovery](troubleshooting.md) rules still apply.
+
+## Common Connectors
+
+The Connector catalog includes the Connectors below, but isn't limited to them;
+any of the more than 400 Connectors can be connected. Recognize these in
+requests, including informal names such as "the KB", "our wiki", "Atlassian",
+"the CRM", or "our intranet", and use the Connector name in `retrieve` and
+`search_paths` queries. Which Connectors are connected depends on the tenant;
+being listed here doesn't mean a Connector is connected.
+
+| Domain | Connectors | Typical content | Typical routing |
+| --- | --- | --- | --- |
+| Files and knowledge | Google Drive, intranet sites, ServiceNow KB, Notion | Documents, internal and line-of-business sites, knowledge articles, wiki pages | `retrieve` for answers, how-tos, and policies; entity tools to read one full article or page |
+| Communication, meetings, and people | Slack, Zoom, Workday | Channel messages and threads, meetings and recordings, worker profiles, org, and time off | `retrieve` for discussions and decisions; entity tools for exact people or HR records |
+| Developer tools | Jira Cloud, GitHub, Confluence Cloud, Azure DevOps | Issues, work items, pull requests, repositories, design and wiki pages | `retrieve` for themes and related items; entity tools for filtered lists, counts, and updates |
+| Financial services | LSEG, Moody's, S&P Global | Market data, research, credit ratings, and risk analysis | `retrieve` for research and outlook evidence; entity tools for specific data points |
+| CRM and customer support | Salesforce, HubSpot, Intercom | Accounts, opportunities, deals, contacts, activity, and support conversations | `retrieve` for account context and customer sentiment; entity tools for full records, pipeline lists, and updates |
+| Legal | iManage, NetDocuments, LexisNexis, Harvey | Matter documents, contracts, case law, and legal research | `retrieve` for clauses, precedents, and research; entity tools to open a specific matter or document |
+| Accounting | Xero, Aiwyn Tax, SAP S/4HANA | Ledgers, invoices, payments, tax returns, and ERP records | Entity tools for exact amounts, balances, and filtered lists; `retrieve` for explanations and related notes |
+| Healthcare and life sciences | PubMed, ClinicalTrials.gov | Biomedical literature and clinical trial records | `retrieve` for literature and trial evidence; entity tools for a specific trial or article |
+| Small business | Shopify, Intuit QuickBooks, Stripe | Products, orders, inventory, invoices, payments, and subscriptions | Entity tools for orders, payments, and record updates; `retrieve` for trends and related discussions |
 
 ## Choose the API
 

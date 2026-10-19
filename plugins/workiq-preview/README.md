@@ -117,7 +117,7 @@ Use `ask` when the user explicitly requests Copilot's or a specific agent's answ
 
 ### Copilot Connectors
 
-More than 400 Connectors to enterprise systems are available, such as Jira, GitHub, Salesforce, ServiceNow, Slack, Google Drive, and Workday. Any Connector already connected in a Copilot surface works through WorkIQ with no extra setup. Connected sources take part in `ask` and `retrieve`, and their operations are available through entity tools.
+More than 400 Connectors to enterprise systems are available, such as ServiceNow KB, Jira Cloud, Confluence, and intranet sites. Any Connector already connected in a Copilot surface works through WorkIQ with no extra setup. Connected sources take part in `ask` and `retrieve`, and their operations are available through entity tools.
 
 | Task needs | Use |
 |------------|-----|

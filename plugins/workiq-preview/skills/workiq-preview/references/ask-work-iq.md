@@ -10,7 +10,7 @@ with explicit Grounding by default and caller-owned synthesis.
 An absent retrieval tool is not permission to silently substitute a delegated answer.
 
 Copilot reasons across Microsoft 365 and connected enterprise systems (Copilot
-Connectors such as Salesforce, Slack, or Jira), so a delegated question can draw
+Connectors such as ServiceNow KB, Jira Cloud, Confluence, or intranet sites), so a delegated question can draw
 on both. Connectors don't change when to use `ask`: the user must still
 intentionally request Copilot's or a named agent's answer.
 
