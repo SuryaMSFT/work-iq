@@ -126,8 +126,8 @@ confirmed writes (link the created or updated record).
   the entity-tool response.
 - Put the link next to the fact it supports, with the record's title or key as
   the link text.
-- If no URL is returned, give the record key or ID instead. Never construct or
-  guess a URL.
+- If no URL is returned, give the record key or ID instead. If neither is
+  available, name the source system. Never construct or guess a URL.
 
 ## Empty retrieve results
 
