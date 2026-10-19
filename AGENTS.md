@@ -14,7 +14,6 @@ work-iq/
 │   ├── workiq-preview/
 │   ├── microsoft-365-agents-toolkit/
 │   └── workiq-productivity/
-├── docs/                     # Design and usage guidance drafts (e.g. connectors-usage-guidance.md)
 ├── tests/workiq-guidance/     # Offline preview guidance and trace-contract checks
 ├── server.json               # MCP server manifest
 ├── ADMIN-INSTRUCTIONS.md     # Tenant admin consent guide
