@@ -1,6 +1,6 @@
 ---
 name: workiq-preview
-description: WorkIQ tools for Microsoft 365 workplace data and actions. Use for email, meetings, calendar, files, SharePoint, OneDrive, Teams, people, Planner, and connected work context. Triggers include gather requirements, summarize workplace discussions, manage meetings, create an upload session, send or draft replies, manage tasks, and discover paths or schemas. Retrieve context first with explicit Grounding when available and synthesize locally; use ask only for intentional delegation to Copilot or a known/discovered agent. Exact entities, structured workflows, writes, and downloads stay on entity tools. This skill contains instructions for the WorkIQ MCP tools and must be used beforehand to understand their usage.
+description: WorkIQ tools for Microsoft 365 workplace data and actions. Use for email, meetings, calendar, files, SharePoint, OneDrive, Teams, people, Planner, and connected enterprise systems through Copilot Connectors (such as Jira, Salesforce, ServiceNow, Slack). Triggers include gather requirements, summarize workplace discussions, manage meetings, create an upload session, send or draft replies, manage tasks, and discover paths or schemas. Retrieve context first with explicit Grounding when available and synthesize locally; use ask only for intentional delegation to Copilot or a known/discovered agent. Exact entities, structured workflows, writes, and downloads stay on entity tools. This skill contains instructions for the WorkIQ MCP tools and must be used beforehand to understand their usage.
 compatibility: >
   Uses the hosted WorkIQ MCP endpoint. No local package is required for MCP
   tool calls.
@@ -8,7 +8,8 @@ compatibility: >
 
 # WorkIQ - Microsoft 365 Tool Surface
 
-Use WorkIQ for workplace data: mail, calendar, Teams, files, people, and Planner.
+Use WorkIQ for workplace data: mail, calendar, Teams, files, people, Planner, and
+connected enterprise systems through Copilot Connectors.
 Tools use WorkIQ entity paths, not arbitrary Microsoft Graph URLs.
 This policy is agent-host-neutral; use the current host's tool catalog, skill
 loading, confirmation, and result-handling mechanisms.
@@ -32,6 +33,8 @@ before calling. Never guess aliases or derive prefixes from a skill folder.
 | Call an OData function (delta, reminderView, named-file search) | `call_function` |
 | Download file or attachment bytes | `fetch_blob` |
 | Discover entity paths / inspect operation fields and body shape | `search_paths` / `get_schema` |
+| Semantic evidence from connected systems (Jira, Salesforce, ServiceNow, and others), including one named system, or work items and tickets with no system named | `retrieve` with `strategy: "copilot"`; see [Connectors](references/connectors-work-iq.md) |
+| Full records, exact field filters, counts, or writes in one connected system | `search_paths`, then `get_schema`, then `call_function` (reads) or `do_action` (writes); never `create_entity`, `update_entity`, or `delete_entity` |
 
 Semantic does not automatically mean `retrieve` or `ask`: exact entity URLs,
 bounded listings, and known workflows stay on entity tools, with local synthesis.
@@ -53,6 +56,7 @@ before first use; `query` is a nonempty string array with a nonblank query.
 | Ordinary, unspecified, unknown-location, or indexed-M365 evidence | `grounding` (skill default); no routing clarification just because location is unknown |
 | Required external/federated/MCP sources, mixed indexed/external scope, or explicit broader retrieval | `copilot` directly; no Grounding preflight |
 | Required `Dataverse` or `GraphConnectors` capability | `copilot`; never drop the capability to fit Grounding |
+| Content in connected systems: a named Connector, or work items, tickets, deals, or cases with no system named | `copilot`; `grounding` returns no Connector content |
 | Grounding-only conflicts with a required broader source | Explain the conflict and ask which constraint to change |
 
 **Always include `strategy`.** The API default when omitted is still `copilot`,
@@ -83,6 +87,16 @@ escalation per retrieval objective for a concrete missing broader-source need,
 within the user's scope; no strategy ping-pong or `ask` fallback.
 See [agent discovery](references/agents-work-iq.md) and [delegation](references/ask-work-iq.md)
 for exact IDs, attribution, and same-agent `conversationId` continuation.
+
+## Copilot Connectors
+
+More than 400 Connectors to enterprise systems are available; any Connector
+already connected in a Copilot surface works with no extra setup. Connected
+sources take part in `ask` and `copilot` retrieval, and their operations are
+available through entity tools. Read the [Connectors guide](references/connectors-work-iq.md)
+before any Connector task. In short: a named system with a semantic need still
+starts with `retrieve`; Connector operations always use `search_paths` and
+`get_schema` first, reads use `call_function`, and confirmed writes use `do_action`.
 
 ## Known Paths - Go Direct, Skip Discovery
 
@@ -149,7 +163,7 @@ inline wording or a new message for a requested persisted reply.
 - Honor `@odata.nextLink`: for all/every/complete requests, continue supported paging or explicitly report partial results. Do not invent `$skip` cursors.
 - Never retry a write whose outcome is ambiguous as though it definitely failed. Report actual outcomes; claim completion only when the response confirms it.
 - On explicit authentication, consent, access, or policy denial, stop and follow the reported remediation. Do not bypass it through another tool, strategy, agent, endpoint, or plugin. Never invent a cause for a generic error.
-- Use the [operation-aware recovery policy](references/troubleshooting.md). Honor returned retry delays; reconcile concurrent changes after a 412 rather than blindly overwriting. Do not fan out into broad entity searches when semantic retrieval fails.
+- Use the [operation-aware recovery policy](references/troubleshooting.md). Honor returned retry delays; reconcile concurrent changes after a 412 rather than blindly overwriting. Do not fan out into broad entity searches when semantic retrieval fails. The only exception is the single targeted search in a named or clearly implied connected system after an empty Connector result; see [Connectors](references/connectors-work-iq.md#empty-retrieve-results).
 - Use Planner for the user's M365 tasks, not local files or SQL substitutes. Do not claim lack of M365 access without trying the relevant tool.
 
 ## References - Read Only What the Task Needs
@@ -163,5 +177,6 @@ inline wording or a new message for a requested persisted reply.
 | Mail / Teams / Planner | [Mail](references/mail-work-iq.md) / [Teams](references/teams-work-iq.md) / [Tasks](references/tasks-work-iq.md) |
 | Reads, paging / binary downloads / delta and functions | [fetch](references/fetch-work-iq.md) / [fetch_blob](references/fetch-blob-work-iq.md) / [call_function](references/call-function-work-iq.md) |
 | Paths / schemas | [search_paths](references/search-paths-work-iq.md) / [get_schema](references/get-schema-work-iq.md) |
+| Connected enterprise systems (Copilot Connectors) | [Connectors](references/connectors-work-iq.md) |
 | Create / update / delete / actions | [create_entity](references/create-entity-work-iq.md) / [update_entity](references/update-entity-work-iq.md) / [delete_entity](references/delete-entity-work-iq.md) / [do_action](references/do-action-work-iq.md) |
 | Failures | [Troubleshooting](references/troubleshooting.md) |

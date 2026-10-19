@@ -47,3 +47,21 @@ Do not invent paths absent from the result.
 ```json
 {"query":"Planner plans and tasks"}
 ```
+
+## Copilot Connectors
+
+Connector operations (Jira, Salesforce, ServiceNow, and others) always need
+discovery: there are no documented known paths for them. Search for the
+task-relevant system and operation, choose the returned tool whose description
+and supported operations fit the task, then inspect its schema with
+[get_schema](get-schema-work-iq.md) before calling it. Discovery is not a
+substitute for semantic retrieval; see [Connectors](connectors-work-iq.md) for
+when to use entity tools at all.
+
+```json
+{"query":"search Salesforce opportunities"}
+```
+
+```json
+{"query":"ServiceNow incident update"}
+```

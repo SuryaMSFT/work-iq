@@ -2,7 +2,8 @@
 
 Agent-host-neutral WorkIQ tools for compatible AI agents: caller-owned context
 via available `retrieve` with explicit Grounding by default, intentional agent
-delegation via `ask`, and exact Microsoft 365 reads and writes.
+delegation via `ask`, and exact Microsoft 365 reads and writes. Connected
+enterprise systems (Copilot Connectors) work through the same tools.
 
 ## Installation
 
@@ -114,13 +115,35 @@ Use `ask` when the user explicitly requests Copilot's or a specific agent's answ
 
 > ⚠️ `upload_blob` is not released. Creating an upload session is supported separately from sending bytes: “session created; no bytes uploaded” is not “file replaced.”
 
+### Copilot Connectors
+
+More than 400 Connectors to enterprise systems are available, such as Jira, GitHub, Salesforce, ServiceNow, Slack, Google Drive, and Workday. Any Connector already connected in a Copilot surface works through WorkIQ with no extra setup. Connected sources take part in `ask` and `retrieve`, and their operations are available through entity tools.
+
+| Task needs | Use |
+|------------|-----|
+| An answer the user explicitly requests from Copilot or a named agent | `ask` |
+| Semantic evidence across connected systems, or from one named system, or work items and tickets with no system named | `retrieve` with `strategy: "copilot"` (`grounding` returns no Connector content) |
+| Full records, exact field filters, counts, or writes in one connected system | `search_paths`, then `get_schema`, then `call_function` (reads) or confirmed `do_action` (writes) |
+| Understanding first, then depth or action | `retrieve`, then entity tools on the cited records |
+
+```
+"Investigate recurring authentication complaints across Intercom, Jira, and Slack"
+"Show work items assigned to me"
+"List all open P1 bugs in Jira project PLATFORM, grouped by assignee"
+"Move incident INC0048217 to In Progress in ServiceNow"
+"Find Jira issues about SSO login failures and create a tracking issue with the findings"
+```
+
+See the [Connectors reference](./skills/workiq-preview/references/connectors-work-iq.md) for routing, query framing, empty results, sign-in, and write confirmation.
+
 ## Skills
 
 The skill opens with a compact dispatcher. Read the applicable canonical contract:
 [files](./skills/workiq-preview/references/files-work-iq.md),
 [calendar](./skills/workiq-preview/references/calendar-work-iq.md),
 [mail](./skills/workiq-preview/references/mail-work-iq.md),
-[Teams](./skills/workiq-preview/references/teams-work-iq.md), or
+[Teams](./skills/workiq-preview/references/teams-work-iq.md),
+[Connectors](./skills/workiq-preview/references/connectors-work-iq.md), or
 [agents](./skills/workiq-preview/references/agents-work-iq.md).
 [Detailed workflows](./skills/workiq-preview/references/workflows-work-iq.md) owns
 the index, setup, and cross-domain sequencing; [troubleshooting](./skills/workiq-preview/references/troubleshooting.md)
@@ -128,7 +151,7 @@ owns operation-aware recovery.
 
 | Skill | Description |
 |-------|-------------|
-| [**workiq-preview**](./skills/workiq-preview/SKILL.md) | Retrieve-first context with explicit Grounding; intentional agent delegation; exact reads/writes/downloads on entity tools |
+| [**workiq-preview**](./skills/workiq-preview/SKILL.md) | Retrieve-first context with explicit Grounding; intentional agent delegation; exact reads/writes/downloads on entity tools; Copilot Connectors to connected enterprise systems |
 
 ## Platform Support
 

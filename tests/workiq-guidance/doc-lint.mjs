@@ -158,7 +158,12 @@ export const policies = [
   ['R.C4', 'references/troubleshooting.md', /412|precondition/i, 'reconcile precondition failures'],
   ['R.C4', 'references/troubleshooting.md', /(?:effect|read.only|getSchedule)/i, 'classify actions by effects'],
   ['R.C6', 'references/workflows-work-iq.md', /directory[\s\S]{0,200}contacts/i, 'distinguish directory users from contacts'],
-  ['R.schema', 'references/workflows-work-iq.md', /(?:explicit|request)[\s\S]{0,200}(?:get_schema|schema)/i, 'honor explicit schema requests']
+  ['R.schema', 'references/workflows-work-iq.md', /(?:explicit|request)[\s\S]{0,200}(?:get_schema|schema)/i, 'honor explicit schema requests'],
+  ['G26', 'references/connectors-work-iq.md', /grounding[\s\S]{0,120}not return\s+Connector content/i, 'Connector content needs copilot retrieval'],
+  ['G26', 'SKILL.md', /connected systems[\s\S]{0,200}copilot/i, 'route Connector content to copilot retrieval'],
+  ['G27', 'references/connectors-work-iq.md', /rephrase[\s\S]{0,200}once[\s\S]{0,300}targeted/i, 'bound empty Connector retrieval fallback'],
+  ['G28', 'references/connectors-work-iq.md', /`do_action`[\s\S]{0,200}never[\s\S]{0,40}`create_entity`/i, 'Connector writes use do_action'],
+  ['G28', 'references/connectors-work-iq.md', /confirm/i, 'Connector writes need confirmation']
 ];
 
 export function policyProblems(file, text) {

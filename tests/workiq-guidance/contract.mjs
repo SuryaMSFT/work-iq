@@ -28,6 +28,9 @@ export const requirements = {
   G23: 'Unsupported Grounding is disclosed, not silently omitted.',
   G24: 'Exact entities, full collections, bytes and mutations use entity tools.',
   G25: 'Retrieval arguments have explicit strategy, query array and compatible capabilities.',
+  G26: 'Connector content, named or with no system named, selects Copilot retrieval.',
+  G27: 'Empty Connector retrieval allows one rephrase, then one disclosed targeted search; M365 zero hits allow no entity sweep.',
+  G28: 'Connector writes discover with search_paths, inspect get_schema and use a confirmed do_action.',
   'R.C1': 'Domain recipes remain discoverable, parsed frontmatter and local links are valid.',
   'R.C2': 'Files use exact authoritative source/destination identity and effect-correct tools.',
   'R.C3': 'Approval, execution and observed completion are separate states.',
@@ -52,7 +55,8 @@ export const requiredReferences = [
   'retrieve-work-iq.md', 'ask-work-iq.md', 'agents-work-iq.md',
   'files-work-iq.md', 'calendar-work-iq.md', 'mail-work-iq.md',
   'teams-work-iq.md', 'tasks-work-iq.md', 'workflows-work-iq.md',
-  'troubleshooting.md', 'get-schema-work-iq.md', 'search-paths-work-iq.md'
+  'troubleshooting.md', 'get-schema-work-iq.md', 'search-paths-work-iq.md',
+  'connectors-work-iq.md'
 ];
 
 export function retrievalProblems(args, supported = capabilities) {

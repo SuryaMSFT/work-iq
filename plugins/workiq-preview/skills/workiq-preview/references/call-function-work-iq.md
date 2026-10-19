@@ -23,6 +23,7 @@ probe alternative tool names or infer support from Graph documentation.
 | Explicit structured synchronization/change tracking | Delta contract below and domain owners |
 | Ordinary calendar window or exact entity/collection | [fetch](fetch-work-iq.md), not delta |
 | Open-ended "what's new?" or project catch-up | Caller-owned [retrieval](retrieve-work-iq.md), not keyword-triggered delta |
+| Copilot Connector read: full records, field filters, counts, or a targeted search in one connected system | The path from [search_paths](search-paths-work-iq.md), after [get_schema](get-schema-work-iq.md); see [Connectors](connectors-work-iq.md) |
 
 ## Explicit delta and checkpoints
 

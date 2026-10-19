@@ -42,6 +42,11 @@ mutations even if they do not send a message.
 | Accept/decline, cancellation, forwarding, free/busy | [Calendar](calendar-work-iq.md) |
 | Drive-scoped copy and upload-session creation | [Files](files-work-iq.md) |
 | Read/unread, reactions, presence | [Teams](teams-work-iq.md) |
+| Copilot Connector writes: create, update, transition, or delete a record in a connected system | [Connectors](connectors-work-iq.md) |
+
+Every Connector write uses `do_action`, never `create_entity`, `update_entity`,
+or `delete_entity`. Discover the action with [search_paths](search-paths-work-iq.md),
+inspect it with `get_schema`, and confirm the exact change with the user first.
 
 Use [create_entity](create-entity-work-iq.md) for collection creation such as a
 fresh draft; `createReply`/`createReplyAll`/`createForward` remain actions.

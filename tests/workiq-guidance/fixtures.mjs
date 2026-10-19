@@ -738,4 +738,68 @@ for (const [id, tool, args, code] of [
   add(s.id, ['R.C3', 'R.C4'], s, ['confirm:synthetic-confirm-copy', { op: 'copy' }, { op: 'monitor' }], {},
     e => { e.splice(e.findIndex(x => x.type === 'call' && x.tool === 'fetch'), 2); }, 'false-completion');
 }
+// Copilot Connectors: content in connected systems uses Copilot retrieval; empty results allow one
+// rephrase and one disclosed targeted search; writes discover, inspect schema and use confirmed do_action.
+{
+  const s = base('connector-work-items', 'Show work items assigned to me.', {
+    connectorContent: true, operations: [semanticOp('broader', 'copilot')]
+  });
+  add(s.id, ['G26', 'G25'], s, [{ op: 'broader', args: cArgs }], { citations: [cite] },
+    e => { firstCall(e).args.strategy = 'grounding'; }, 'initial-strategy');
+}
+{
+  const empty = result('ok', { citations: [], sufficient: false });
+  const found = result('ok', { citations: ['synthetic-connector-record'], sufficient: true });
+  const discover = { query: 'search synthetic tracker issues' };
+  const schema = { path: '/connectors/synthetic-tracker/searchIssues', operationType: 'fetch' };
+  const search = { functionUrl: "/connectors/synthetic-tracker/searchIssues(text='synthetic login')" };
+  const s = base('connector-empty-fallback', 'Find synthetic tracker issues about login failures.', {
+    connectorContent: true, connectorFallback: true,
+    operations: [
+      semanticOp('first', 'copilot', empty), semanticOp('rephrase', 'copilot', empty),
+      read('discover', 'search_paths', discover), read('schema', 'get_schema', schema, result(), { requires: ['discover'] }),
+      read('search', 'call_function', search, found, { requires: ['schema'] })
+    ],
+    requiredOperations: ['first', 'rephrase', 'discover', 'schema', 'search']
+  });
+  add(s.id, ['G27', 'G26'], s, [
+    { op: 'first', args: cArgs },
+    { op: 'rephrase', args: { ...cArgs, query: ['Synthetic tracker issues about sign-in errors'] } },
+    { op: 'discover' }, { op: 'schema' }, { op: 'search' }
+  ], { citations: ['synthetic-connector-record'], limitations: ['direct-search'] },
+  e => { e.splice(2, 2); }, 'premature-fallback');
+  cases.at(-1).negatives.push(
+    { name: `${s.id}-undisclosed`, trace: alter(cases.at(-1).positive, e => { last(e).limitations = []; }), violation: 'fallback-disclosure' },
+    { name: `${s.id}-extra-rephrase`, trace: alter(cases.at(-1).positive, e => { e.splice(4, 0, ...clone(e.slice(2, 4))); e[4].id = 'synthetic-extra'; e[5].callId = 'synthetic-extra'; }), violation: 'rephrase-budget' }
+  );
+}
+{
+  const s = base('m365-empty-no-sweep', 'Find synthetic project decisions.', {
+    operations: [semanticOp('ground', 'grounding', result('ok', { citations: [], sufficient: false }))]
+  });
+  add(s.id, ['G27', 'G17'], s, [{ op: 'ground', args: gArgs }],
+    { status: 'not found in searched scope', limitations: ['searched-scope'] },
+    e => appendCall(e, 'search_paths', { query: 'synthetic project decisions' }), 'broad-sweep');
+}
+{
+  const discover = { query: 'synthetic service desk incident update' };
+  const schema = { path: '/connectors/synthetic-desk/updateIncident', operationType: 'action' };
+  const args = { actionUrl: '/connectors/synthetic-desk/updateIncident', jsonBody: { number: 'SYN0001', state: 'In Progress' } };
+  const s = base('connector-write', 'Move synthetic incident SYN0001 to In Progress.', {
+    mode: 'exact', operations: [
+      read('discover', 'search_paths', discover),
+      read('schema', 'get_schema', schema, result(), { requires: ['discover'] }),
+      write('update', 'do_action', args, result('ok'), { requires: ['schema'] })
+    ],
+    confirmations: { 'synthetic-confirm-update': { kind: 'mutation', operationId: 'update', args } },
+    requiredOperations: ['discover', 'schema', 'update']
+  });
+  add(s.id, ['G28', 'R.C3'], s, [{ op: 'discover' }, { op: 'schema' }, 'confirm:synthetic-confirm-update', { op: 'update' }],
+    {}, e => { e.find(x => x.type === 'call' && x.tool === 'do_action').tool = 'update_entity'; }, 'unsupported-operation');
+  cases.at(-1).negatives.push(
+    { name: `${s.id}-no-schema`, trace: alter(cases.at(-1).positive, e => { e.splice(2, 2); }), violation: 'missing-prerequisite' },
+    { name: `${s.id}-unconfirmed`, trace: alter(cases.at(-1).positive, e => { e.splice(e.findIndex(x => x.type === 'user'), 1); }), violation: 'unconfirmed-mutation' }
+  );
+}
+
 export { cases };

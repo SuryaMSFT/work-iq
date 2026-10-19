@@ -33,3 +33,6 @@ not identify the operation.
 | Planner tasks | [Tasks](tasks-work-iq.md) |
 | Chat/channel messages | [Teams](teams-work-iq.md) |
 | Files and upload limitations | [Files](files-work-iq.md) |
+
+Not used for Copilot Connector records; Connector creates use
+[do_action](do-action-work-iq.md). See [Connectors](connectors-work-iq.md).
