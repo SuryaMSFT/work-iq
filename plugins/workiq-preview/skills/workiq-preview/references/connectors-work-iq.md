@@ -115,6 +115,20 @@ that shares a field value with a cited one, look the record up with the system's
 read operation through `call_function`, using the cited key. Base any write on the
 ID that lookup returns, never on a citation URL or excerpt.
 
+## Link to source records
+
+Always give the user the URL of every Connector record the answer relies on,
+such as the Jira issue, ServiceNow incident, Confluence page, or Salesforce
+opportunity. This applies to `retrieve` results, entity-tool reads, and
+confirmed writes (link the created or updated record).
+
+- Use the URL from the `retrieve` citation or from the record's URL field in
+  the entity-tool response.
+- Put the link next to the fact it supports, with the record's title or key as
+  the link text.
+- If no URL is returned, give the record key or ID instead. Never construct or
+  guess a URL.
+
 ## Empty retrieve results
 
 An empty result proves neither absence nor a broader-source need. For a Connector
@@ -197,6 +211,8 @@ or `delete_entity` for Connectors.
 - Using `retrieve` when the user needs a complete list, a count, or a full record.
 - Stopping at excerpts when the task needs full details, comments, history, or
   related records.
+- Answering from Connector records without linking to them, or guessing a
+  record URL that wasn't returned.
 - Reporting "nothing found" after one empty result without the rephrase and, for
   a named or clearly implied system, the targeted direct search.
 - Calling `call_function` or `do_action` without first using `search_paths` and
