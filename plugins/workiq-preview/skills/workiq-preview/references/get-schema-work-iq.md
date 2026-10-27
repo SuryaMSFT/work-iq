@@ -30,6 +30,12 @@ An action may be read-only or mutating. Its effects, not `action` or POST alone,
 determine confirmation and recovery requirements. Do not substitute a parent
 entity schema for an action body; their wrappers differ.
 
+For Copilot Connector operations, always inspect the schema of the path returned
+by [search_paths](search-paths-work-iq.md) before calling it: `fetch` for a read
+that runs through `call_function`, `action` for a write that runs through
+`do_action`. Build the request with every required parameter. See
+[Connectors](connectors-work-iq.md).
+
 ## Request schema vs response schema
 
 Inspect what the returned schema actually describes. The inherited action-schema

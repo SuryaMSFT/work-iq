@@ -71,6 +71,19 @@ Report a missing tool rather than repeatedly trying names or installing a plugin
 - `stoppedReason: "error"` with zero hits is a failure, not a successful no-match.
   Empty success or a host cap alone is not a reason to broaden sources.
 - Explicit denials stop; do not use evidence repair to bypass them.
+- Empty `copilot` evidence for Connector content allows one rephrase, then at
+  most one disclosed targeted search in a named or clearly implied connected
+  system; see [Connectors](connectors-work-iq.md#empty-retrieve-results). Errors,
+  timeouts, unavailable retrieval, and denials don't qualify.
+
+## Connector sign-in
+
+A Copilot Connector operation may ask the user to sign in to the connected
+system, through a URL-mode elicitation or, when the host doesn't support
+elicitations, a returned sign-in URL. A sign-in request is not a denial: give the
+user the link, wait for them to finish, then retry the operation once. If
+sign-in fails or is declined, stop and report it. See
+[Connectors](connectors-work-iq.md).
 
 ## Entity URL or schema errors
 

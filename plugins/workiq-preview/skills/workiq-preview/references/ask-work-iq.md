@@ -9,6 +9,11 @@ with explicit Grounding by default and caller-owned synthesis.
 `retrieve` with `strategy: "copilot"` is still evidence retrieval, not `ask`.
 An absent retrieval tool is not permission to silently substitute a delegated answer.
 
+Copilot reasons across Microsoft 365 and connected enterprise systems (Copilot
+Connectors such as ServiceNow KB, Jira Cloud, Confluence, or intranet sites), so a delegated question can draw
+on both. Connectors don't change when to use `ask`: the user must still
+intentionally request Copilot's or a named agent's answer.
+
 ## Parameters
 
 Resolve the exact tool and live schema from the connected WorkIQ MCP catalog.
@@ -48,6 +53,15 @@ User: "Ask Microsoft 365 Copilot what is blocking Project Aurora."
 ```json
 {
   "question": "What is blocking Project Aurora? Identify current blockers and cite the supporting sources."
+}
+```
+
+User: "Ask Copilot what changed on the Contoso renewal this week, considering CRM
+updates and Slack conversations."
+
+```json
+{
+  "question": "What changed on the Contoso renewal this week? Consider CRM updates in Salesforce and Slack conversations, and cite the supporting sources."
 }
 ```
 

@@ -66,7 +66,8 @@ export function validateTrace(scenario, trace, { observed = false } = {}) {
   const pendingAccepted = new Set();
   const pendingPartials = new Set();
   const requiredBroad = scenario.scope.required.some(c => broaderCapabilities.includes(c));
-  const firstStrategy = requiredBroad || scenario.explicitCopilot ? 'copilot' : 'grounding';
+  const firstStrategy = requiredBroad || scenario.explicitCopilot || scenario.connectorContent ? 'copilot' : 'grounding';
+  let emptyRetrieves = 0, fallbackUsed = false;
 
   for (const event of trace.events) {
     if (!event || typeof event !== 'object') { fail('trace-schema', 'Malformed event.'); continue; }
@@ -114,7 +115,14 @@ export function validateTrace(scenario, trace, { observed = false } = {}) {
           fail('delegation-preflight', 'Explicit delegation does not require retrieval or entity preflight.');
         }
       }
+      if (scenario.mode === 'context' && !['retrieve', 'ask', 'list_agents'].includes(event.tool) &&
+          emptyRetrieves > 0 && !citations.size && !fallbackUsed) {
+        if (!scenario.connectorFallback) fail('broad-sweep', 'Empty evidence does not authorize an entity search.');
+        else if (emptyRetrieves < 2) fail('premature-fallback', 'Rephrase the Connector retrieval once before a targeted direct search.');
+        fallbackUsed = true;
+      }
       if (event.tool === 'retrieve') {
+        if (scenario.connectorContent && emptyRetrieves >= 2) fail('rephrase-budget', 'Rephrase empty Connector retrieval only once.');
         for (const problem of retrievalProblems(event.args, scenario.capabilities)) fail('retrieval-schema', problem);
         if (!scenario.strategies.includes(event.args.strategy)) fail('strategy-unavailable', 'Requested strategy is not advertised.');
         const caps = Array.isArray(event.args.capabilities) ? event.args.capabilities.map(c => c?.name) : [];
@@ -222,6 +230,7 @@ export function validateTrace(scenario, trace, { observed = false } = {}) {
         ambiguity ||= op.effect === 'mutation' && ['timeout', 'error', 'null', 'transport'].includes(value.status);
         precondition ||= op.effect === 'mutation' && value.status === 'precondition';
         if (value.status === 'ok') {
+          if (call.tool === 'retrieve' && !value.citations?.length) emptyRetrieves++;
           completed.add(op.id);
           for (const id of op.resolves ?? []) {
             if (!pendingPartials.delete(id)) fail('partial-recovery', 'Recovery must identify an outstanding partial result.');
@@ -322,6 +331,9 @@ export function validateTrace(scenario, trace, { observed = false } = {}) {
       (final.status !== 'blocked' || !final.limitations.includes('retrieval-unavailable'))) fail('availability-outcome', 'Disclose missing retrieval policy support.');
   if (scenario.conflict && (final.status !== 'awaiting confirmation' || !final.limitations.includes('source-conflict'))) {
     fail('conflicting-scope', 'Source conflicts require a user decision.');
+  }
+  if (fallbackUsed && scenario.connectorFallback && !final.limitations.includes('direct-search')) {
+    fail('fallback-disclosure', 'Disclose that the answer comes from a direct search after empty retrieval.');
   }
   if (scenario.stopReason && !final.limitations.includes(scenario.stopReason)) fail('unresolved-identity', 'Missing prerequisites must be disclosed.');
   if (!calls && final.status === 'completed') fail('false-completion', 'No execution evidence for completion.');

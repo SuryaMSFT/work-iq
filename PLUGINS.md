@@ -78,7 +78,7 @@ copilot plugin uninstall workiq-productivity
 | # | Plugin | Skills | Description |
 |---|--------|--------|-------------|
 | 1 | [**workiq**](#workiq) | 1 | Full WorkIQ tool surface — agentic queries plus direct M365 reads and writes |
-| 2 | [**workiq-preview**](#workiq-preview) | 1 | Preview retrieve-first context, intentional delegation, and exact M365 reads and writes |
+| 2 | [**workiq-preview**](#workiq-preview) | 1 | Preview retrieve-first context, intentional delegation, exact M365 reads and writes, and Copilot Connectors |
 | 3 | [**microsoft-365-agents-toolkit**](#microsoft-365-agents-toolkit) | 4 | Toolkit for building M365 Copilot declarative agents |
 | 4 | [**workiq-productivity**](#workiq-productivity) | 10 | Read-only productivity insights across M365 |
 
@@ -118,7 +118,7 @@ copilot plugin uninstall workiq-productivity
 
 ## workiq-preview
 
-> **Preview build.** Agent-host-neutral guidance for retrieve-first context with explicit Grounding when available, intentional agent delegation via `ask`, and exact entity reads, writes, and downloads. The public `workiq` skill retains its existing policy.
+> **Preview build.** Agent-host-neutral guidance for retrieve-first context with explicit Grounding when available, intentional agent delegation via `ask`, and exact entity reads, writes, and downloads. Includes guidance for connected enterprise systems through Copilot Connectors (`copilot` retrieval; `search_paths`, `get_schema`, `call_function`, and confirmed `do_action` for Connector operations). The public `workiq` skill retains its existing policy.
 
 **Install:** `/plugin install workiq-preview@work-iq`
 **Source:** [`plugins/workiq-preview/`](./plugins/workiq-preview/)
@@ -145,7 +145,7 @@ Installing the plugin does not enable tenant-gated retrieval.
 
 | Skill | Description |
 |-------|-------------|
-| [**workiq-preview**](./plugins/workiq-preview/skills/workiq-preview/SKILL.md) | Load before using WorkIQ tools. Retrieve context with explicit Grounding; delegate only intentionally; keep exact operations on entity tools. Missing retrieval requires disclosure and user-selected delegation, never automatic `ask` fallback. |
+| [**workiq-preview**](./plugins/workiq-preview/skills/workiq-preview/SKILL.md) | Load before using WorkIQ tools. Retrieve context with explicit Grounding; delegate only intentionally; keep exact operations on entity tools. Missing retrieval requires disclosure and user-selected delegation, never automatic `ask` fallback. Connector tasks follow the Connectors reference. |
 
 ### Example prompts
 

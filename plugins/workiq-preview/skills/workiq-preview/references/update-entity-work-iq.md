@@ -43,3 +43,6 @@ the documented action, not a speculative PATCH based on parent-entity metadata.
 | Task completion and due dates | [Tasks](tasks-work-iq.md) |
 | Message edits and presence | [Teams](teams-work-iq.md) |
 | Directory versus personal contacts | [Workflows](workflows-work-iq.md) |
+
+Not used for Copilot Connector records; Connector updates use
+[do_action](do-action-work-iq.md). See [Connectors](connectors-work-iq.md).

@@ -10,6 +10,8 @@ Domain references own their endpoint recipes.
 |---|---|
 | Gather evidence for your own summary, status update, comparison, catch-up, or implementation | Available `retrieve` with explicit `strategy: "grounding"`, including unknown or unspecified locations; [retrieval](retrieve-work-iq.md) |
 | Required broader/federated sources, mixed indexed/external scope, `Dataverse`, or `GraphConnectors` | `retrieve` with explicit `strategy: "copilot"` directly; preserve source restrictions |
+| Semantic evidence from connected systems (named Connector, or work items, tickets, deals, or cases with no system named) | `retrieve` with explicit `strategy: "copilot"`; [Connectors](connectors-work-iq.md) |
+| Full records, field filters, counts, or writes in one connected system | `search_paths`, `get_schema`, then `call_function` (reads) or confirmed `do_action` (writes); [Connectors](connectors-work-iq.md) |
 | Intentionally ask Microsoft 365 Copilot or a named agent a question | [Delegated answers](ask-work-iq.md); [agent discovery](agents-work-iq.md) for an unresolved named agent |
 | Exact file metadata, folders, rename/move/copy/delete, or upload session | [Files](files-work-iq.md) |
 | Calendar windows, event actions, rescheduling, reminders, next meeting, or free/busy | [Calendar](calendar-work-iq.md) |
@@ -32,6 +34,10 @@ the user's selection. A denial stops all alternate tools, paths, agents, and
 strategies for the denied operation. An empty result or host cap alone does not
 authorize broader retrieval; inspect an available saved result before repair.
 The [retrieval contract](retrieve-work-iq.md) owns bounded refinement and escalation.
+The one exception for empty results is Connector content: after one rephrased
+`copilot` retrieval, at most one targeted search in a named or clearly implied
+connected system, disclosed to the user. See
+[Connectors](connectors-work-iq.md#empty-retrieve-results).
 
 ## Resolving tool names in your host
 
@@ -73,6 +79,9 @@ See [recovery](troubleshooting.md) before resuming an interrupted operation.
 - Known supported operations go directly to their domain contract. Discover only
   an unknown path or unfamiliar schema. Public web documentation and CLI help
   are not evidence of the connected WorkIQ surface.
+- Copilot Connector operations have no known paths: always use `search_paths`
+  and then `get_schema` before `call_function` or `do_action`. See
+  [Connectors](connectors-work-iq.md).
 - These are reads, not authorization to execute the discovered action. Report
   only paths, fields, and privileges supported by returned evidence.
 

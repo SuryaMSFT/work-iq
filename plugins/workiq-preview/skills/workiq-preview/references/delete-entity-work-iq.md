@@ -34,3 +34,6 @@ merely to force it through.
 | Planner task and etag | [Tasks](tasks-work-iq.md) |
 | Drive-scoped file resolution/deletion | [Files](files-work-iq.md) |
 | Teams deletion support and permission limits | [Teams](teams-work-iq.md) |
+
+Not used for Copilot Connector records; Connector deletions use
+[do_action](do-action-work-iq.md). See [Connectors](connectors-work-iq.md).

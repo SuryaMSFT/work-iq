@@ -65,6 +65,7 @@ conversation continuation parameter; include the necessary context in `query`.
 | Indexed M365 content: SharePoint, OneDrive, Teams, Outlook | Explicit `grounding` |
 | Required federated connectors, external sources, or MCP tools, including mixed indexed/external scope | Explicit `copilot` directly; no redundant Grounding probe |
 | Dataverse or GraphConnectors capability required | `copilot`; incompatible with `grounding` |
+| Content in connected systems: a named Connector (ServiceNow KB, Jira Cloud, Confluence, intranet sites, and others), or work items, tickets, deals, or cases with no system named | Explicit `copilot`; `grounding` returns no Connector content. See [Connectors](connectors-work-iq.md) |
 | User explicitly requests Copilot retrieval or search beyond the M365 index | Explicit `copilot`, subject to other source restrictions |
 | Grounding-only or indexed-M365-only | `grounding`; no broader fallback without permission to change scope |
 | Grounding-only plus a required unsupported capability/source | Explain the conflict and ask which requirement to change; never silently prune capabilities |
@@ -74,7 +75,9 @@ Both strategies gather context for the caller. **`strategy: "copilot"` is not
 `ask`**, and **`grounding` does not mean "any request needing a grounded answer."**
 Do not choose `copilot` merely because the host is GitHub Copilot, the location
 is unknown, the question is complex, or the answer requires reasoning. Broader
-retrieval requires a concrete source need, not uncertainty alone.
+retrieval requires a concrete source need, not uncertainty alone. Content that
+lives in connected systems is such a need: a named Connector, or work items,
+tickets, deals, or cases that may sit in several connected systems.
 
 `copilot` can search beyond the M365 index only through sources configured and
 available to the selected agent and user. It does not promise access to every
@@ -133,6 +136,18 @@ request valid.
 }
 ```
 
+### Gather evidence from named connected systems
+
+```json
+{
+  "query": ["Contoso escalation: Intercom support conversations, related Jira issues, and Slack discussions"],
+  "strategy": "copilot"
+}
+```
+
+Naming a Connector in the query guides retrieval but does not restrict results to
+that source. See [Connectors](connectors-work-iq.md) for query framing.
+
 These are logical tool arguments; invoke the actual host-resolved tool name.
 Do not narrow to a capability unless it matches the user's requested scope.
 
@@ -146,6 +161,7 @@ Check requested identity, source types, time range, and required facts first:
 | Sufficient evidence | Synthesize locally; no Copilot or `ask` resynthesis |
 | Missing detail within a known M365 source | A focused Grounding refinement or appropriate exact read for the named gap |
 | Empty successful or partial evidence | State searched scope; this proves neither absence nor a broader-source need |
+| Empty `copilot` result for Connector content | Rephrase once; if still empty, at most one targeted search in a named or clearly implied connected system, then disclose it. See [Connectors](connectors-work-iq.md#empty-retrieve-results) |
 | Host-capped output | Inspect the host-saved result with an available read tool where possible; a cap is not a reason to broaden |
 | Generic error/timeout | Use [bounded read recovery](troubleshooting.md); do not infer coverage failure or that backend work stopped |
 | Explicit authentication/access/policy denial | Stop; no tool, agent, strategy, or endpoint bypass |
@@ -195,6 +211,9 @@ host always wraps it identically or that every hit has every metadata field.
 - Retrieval hits are not guaranteed full documents, exact Graph entities, or
   authoritative mutation IDs. Use the established entity workflow when an exact
   read, complete list, download, or confirmed write is required. Do not scrape or
-  reconstruct opaque entity IDs from citation URLs.
+  reconstruct opaque entity IDs from citation URLs. For a Connector record, a
+  cited key (such as a Jira issue key or ServiceNow incident number) can drive an
+  entity-tool lookup; any write uses the ID that lookup returns. See
+  [Connectors](connectors-work-iq.md).
 - Do not call `ask` automatically after successful retrieval: synthesize from
   the evidence yourself. Call another tool only for a concrete unmet need.
